@@ -6,7 +6,7 @@ where *<a href="https://www.codecogs.com/eqnedit.php?latex=$c_i$" target="_blank
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=$$log_2(cnt_w&space;/&space;cnt_{total})$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$log_2(cnt_w&space;/&space;cnt_{total})$$" title="$$log_2(cnt_w / cnt_{total})$$" /></a> 
 
-where *cnt_w* is the count of the target word and *cnt_total* is the size of the corpus in words.
+where *<a href="https://www.codecogs.com/eqnedit.php?latex=$cnt_w$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$cnt_w$" title="$cnt_w$" /></a>* is the count of the target word and *<a href="https://www.codecogs.com/eqnedit.php?latex=$cnt_{total}$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$cnt_{total}$" title="$cnt_{total}$" /></a>* is the size of the corpus in words.
 
 The corporus we use is English google-ngrams corpus which is take as an example among all the languages tested in the paper.
 
