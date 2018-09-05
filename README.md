@@ -1,4 +1,4 @@
-We first try to replicate the work in [Word lengths are optimized for efficient communication](http://www.pnas.org/content/108/9/3526.short). According to the paper, we calculate the average amount of information conveyed by a particular word w by the following formula:$$- \frac{1}{N} \sum_{i=1}^N log(W=w|C=c_i)$$ where *$c_i$* is the context for the *i*th occurrence of *w* and *N* is the total frequency of *w* in the corpus. We use three metric to measure the word length: 1) numbers of characters, 2) numbers of phonemes, 3) numbers of syllables within each word. As for frequency, we simply get $$log_2(cnt_w / cnt_total)$$ where *cnt_w* is the count of the target word and *cnt_total* is the size of the corpus in words.
+We first try to replicate the work in [Word lengths are optimized for efficient communication](http://www.pnas.org/content/108/9/3526.short). According to the paper, we calculate the average amount of information conveyed by a particular word w by the following formula:$- \frac{1}{N} \sum_{i=1}^N log(W=w|C=c_i)$ where *$c_i$* is the context for the *i*th occurrence of *w* and *N* is the total frequency of *w* in the corpus. We use three metric to measure the word length: 1) numbers of characters, 2) numbers of phonemes, 3) numbers of syllables within each word. As for frequency, we simply get $$log_2(cnt_w / cnt_total)$$ where *cnt_w* is the count of the target word and *cnt_total* is the size of the corpus in words.
 
 The corporus we use is English google-ngrams corpus which is take as an example among all the languages tested in the paper.
 
@@ -19,21 +19,36 @@ We also set specification criteria for the words we will finally use to test the
 Procdure:
 replication:
 Get OPUS_word_list with OPUS_word_list.py
+
 Get google_25000 word list with google_25000.py
+
 Get replication_word_list with replication_word_list.py
+
 Get phoneme_len list with phoneme_len.py
+
 Get syllable_len list with syllable_list_len.py
+
 Get pho_syl_word_lists with pho_syl_len_word&for_POS.py
+
 Get replication_POS_word_list and pho_syl_len_POS_word_list with replication&pho_syl_len_POS_word_list.py
+
 Get 2gm_info_freq, 2gm_for_gaussian_test, 2gm_POS_for_gaussian_test, 2gm_POS_info_freq with 2gm_info_freq_and_for_gaussian_test.py (the same with 3gm and 4gm)
+
 Get 2gm_gaussian.csv and 2gm_POS_gaussian.csv with gaussian_test.py (the same with 3gm and 4gm)
+
 Get 2gm_merge with merge.py (the same with 3gm and 4gm)
+
 Get 2gm_merge_bin_pair.csv with csy.py (the same with 3gm and 4gm)
+
 
 RNN:
 Get dev-set for RNN model with devset.py
+
 Get devset-result with evaluate_target_word_test.py
+
 Get freq_in_train_set with freq_in_train_set.py
+
 Get RNN_for_gaussian_test, RNN_POS_for_gaussian_test, RNN_info_freq, RNN_POS_info_freq, and RNN_info_freq_pho_syl with info_freq_and_pho_syl_and_gaussian.py
+
 Get csv files with csv.py
 
