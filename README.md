@@ -1,4 +1,4 @@
-This work aims to replicate the work in [Word lengths are optimized for efficient communication](http://www.pnas.org/content/108/9/3526.short), in which it is proved that word length has a higher corraletion with the average amount of information conveyed by a particular word *w* than with the frequency of *w*, which challenges the authority of Zipf's law. '
+This work aims to replicate the work in [Word lengths are optimized for efficient communication](http://www.pnas.org/content/108/9/3526.short), in which it is proved that word length has a higher corraletion with the average amount of information conveyed by a particular word *w* than with the frequency of *w*, which challenges the authority of Zipf's law. 
 
 According to that paper, the information value is calculated by the following formula:
 
@@ -50,7 +50,7 @@ RNN replication: (slides 3.0)
 defination of each item in the formulas:
 	information value of *w*:
 		log base: 2
-		N: total categories of context for each *w* !!!!!
+		N: total occurrence of target *w*
 		w: the target word that appears in the corpus
 		ci: all the previous words of the target word
 		P(w|ci):
@@ -74,7 +74,7 @@ dataset specifications:
 binning specifications:
 	bin: lower bound float-to-int
 	error_bar: SE
-spearman specification: -partial-out !!!!!
+spearman specification: -partial-out
 
 
 
@@ -105,11 +105,11 @@ b. POS validation:
 			 
 
 
-reproduction: (slides 5.0)
+reproduction: 
 defination of each item in the formulas:
 	information value of *w*:
 		log base: 2
-		N: total categories of context for each *w* !!!!!
+		N: total occurrence of target *w*
 		w: the target word that appears in the corpus
 		ci: the previous n-1 words of the target word
 		P(w|ci):
@@ -133,13 +133,10 @@ dataset specifications:
 binning specifications:
 	bin: 2% of the lexicon
 	error_bar: SE
-spearman specification: -partial-out !!!!!
+spearman specification: -partial-out
 	
-Here we made two mistakes in the replication and reproduction: (!!!!!)
-	1. In infomation formula, *N* should be total occurrence of *w*, but we used total categories of context for each *w*. This erased the difference of context frequency for *w* and should be corrected in (slides 6.0). --√ 
-	2. For spearman correlation, we didn't do partialing out, but this doesn't cause huge difference.
 
-We also made some changes to the original frame:
+We made some changes to the original frame:
 	1. We added two extra specifications for dataset: +lower_case, and +alphabetic. This may also causes some difference, but we assume it shouldn't be a major one.'
 	2. We used min_count to set word frequency specification for dataset instead of 25,000 most frequent words. This can cause the failure of replication, which also suggests that the results in the paper only applys to high-frequency words. --√
 	3. We used lower-bound float-to-int for binning instead of 2% of the lexicon. This could be the reason for a different curve in the plots. --√
@@ -351,7 +348,7 @@ prerequistes evaluation:
 
 			*python [n]gm_merge_50000.py [path]/google_web_ngrams/data/[n]gms ../corpora_and_texts_obtained/replication_word_list_50000 ../corpora_and_texts_obtained/replication_POS_word_list_50000 ../corpora_and_texts_obtained/pho_syl_len_word_list --language en --LOO True* 
 		
-		Remove *--LOO True* if you don't want to use leave-one-out cross validation.'
+		Remove *--LOO True* if you don't want to use leave-one-out cross validation.
 
 	2) Plot with plot.Rmd
 		Run *frequency clip evaluation* section of *plot.Rmd* in R Studio. Also replace the cutoff number with different number to see the difference.	
