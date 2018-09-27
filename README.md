@@ -53,11 +53,11 @@ prerequisites tree \{options\} [options that are easily mistaken]
 
 |------>	spearman specifications \{±partial-out(partial out the influence of the other variable | not)\}  
   
-RNN replication: (slides 3.0)  
+RNN replication:  
 defination of each item in the formulas:  
 >	information value of *w*:  
 >	>	log base: 2  
->	>	N: total categories of context for each *w* !!!!!  
+>	>	N: total occurrence of target *w* 
 >	>	w: the target word that appears in the corpus  
 >	>	ci: all the previous words of the target word  
 >	>	P(w|ci):  
@@ -77,17 +77,18 @@ dataset specifications:
 >	size: 30,000  
 >	+lower_case:  
 >	>	-capitilized_case  
+
 >	+alphabetic  
 >	+OPUS  
 >	word_frequency: min_count=1/3/5/10   
 binning specifications:  
 >	bin: lower bound float-to-int  
 >	error_bar: SE  
-spearman specification: -partial-out !!!!!  
+spearman specification: -partial-out 
   
   
   
-follow-up: (slides 4.0)  
+follow-up:   
 a. word-length validation:  
 >	1. defination of each item in the formulas:  
 >	>	word length:  
@@ -101,6 +102,7 @@ a. word-length validation:
 >	>	>	15,000  
 >	>	>	30,000  
 >	>	>	60,000  
+
 >	>	+pho-syl  
 >	>	min_count: (depends on the data size)  
 >	>	>	1/2/3  
@@ -116,11 +118,11 @@ b. POS validation:
 			   
   
   
-reproduction: (slides 5.0)  
+reproduction:  
 defination of each item in the formulas:  
 >	information value of *w*:  
 >	>	log base: 2  
->	>	N: total categories of context for each *w* !!!!!  
+>	>	N: total occurrence of target *w*  
 >	>	w: the target word that appears in the corpus  
 >	>	ci: the previous n-1 words of the target word  
 >	>	P(w|ci):  
@@ -140,17 +142,15 @@ dataset specifications:
 >	size: whole set  
 >	+lower_case:  
 >	>	+capitalized_case  
+
 >	+alphabetic  
 >	word_frequency: 25,000 most frequent words  
 >	+OPUS  
 binning specifications:  
 >	bin: 2% of the lexicon  
 >	error_bar: SE  
-spearman specification: -partial-out !!!!!  
-	  
-Here we made two mistakes in the replication and reproduction: (!!!!!)  
-	1. In infomation formula, *N* should be total occurrence of *w*, but we used total categories of context for each *w*. This erased the difference of context frequency for *w* and should be corrected in (slides 6.0). --√   
-	2. For spearman correlation, we didn't do partialing out, but this doesn't cause huge difference.  
+spearman specification: -partial-out  
+
   
 We also made some changes to the original frame:  
 	1. We added two extra specifications for dataset: +lower_case, and +alphabetic. This may also causes some difference, but we assume it shouldn't be a major one.'  
