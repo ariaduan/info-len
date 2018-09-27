@@ -25,8 +25,7 @@ So we turn back to try to reproduce the work and then scrutinize each prerequisi
 
 prerequisites tree \{options\} [options that are easily mistaken]
 |------	defination of each item in the formulas
-
-	|------	information
+	t|------	information
 	
 		|------	log base [2 | e] 
 		
