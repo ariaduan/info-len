@@ -71,8 +71,11 @@ defination of each item in the formulas:
 
 >	word length:  
 >	>	character number  
+
 model: RNN  
+
 corpora: 1T-benchmark  
+
 dataset specifications:  
 >	size: 30,000  
 >	+lower_case:  
@@ -81,9 +84,11 @@ dataset specifications:
 >	+alphabetic  
 >	+OPUS  
 >	word_frequency: min_count=1/3/5/10   
+
 binning specifications:  
 >	bin: lower bound float-to-int  
 >	error_bar: SE  
+
 spearman specification: -partial-out 
   
   
@@ -136,8 +141,11 @@ defination of each item in the formulas:
 
 >	word length:  
 >	>	character number  
+
 model: ngram  
+
 corpora: google-web-ngram  
+
 dataset specifications:  
 >	size: whole set  
 >	+lower_case:  
@@ -146,9 +154,11 @@ dataset specifications:
 >	+alphabetic  
 >	word_frequency: 25,000 most frequent words  
 >	+OPUS  
+
 binning specifications:  
 >	bin: 2% of the lexicon  
 >	error_bar: SE  
+
 spearman specification: -partial-out  
 
   
