@@ -93,7 +93,7 @@ spearman specification: -partial-out
   
   
   
-follow-up:   
+Follow-up:   
 a. word-length validation:  
 >	1. defination of each item in the formulas:  
 >	>	word length:  
@@ -120,10 +120,11 @@ b. POS validation:
 >	>	POS:  
 >	>	>	NN  
 >	>	>	JJ  
-			   
+
   
-  
-reproduction:  
+    
+    
+Reproduction:  
 defination of each item in the formulas:  
 >	information value of *w*:  
 >	>	log base: 2  
@@ -162,6 +163,7 @@ binning specifications:
 spearman specification: -partial-out  
 
   
+    
 We also made some changes to the original frame:  
 	1. We added two extra specifications for dataset: +lower_case, and +alphabetic. This may also causes some difference, but we assume it shouldn't be a major one.'  
 	2. We used min_count to set word frequency specification for dataset instead of 25,000 most frequent words. This can cause the failure of replication, which also suggests that the results in the paper only applys to high-frequency words. --√  
