@@ -25,26 +25,47 @@ So we turn back to try to reproduce the work and then scrutinize each prerequisi
 
 prerequisites tree \{options\} [options that are easily mistaken]
 |------	defination of each item in the formulas
+
 	|------	information
+	
 		|------	log base [2 | e] 
+		
 		|------	N [total categories of context for target *w* | total occurrence of target *w*]
+		
 		|------	w 
+		
 		|------	ci \{previous n-1 words of the target *w* | all the previous words of the target *w*\}
+		
 		|------	P(w|ci)
+		
 			|------	P-formula \{prediction of the probility of w occurring behind ci based on parameters trained by training set | total occurrence of (ci, w) / total occurrence of (ci, x)\}
+			
 			|------	dataset [training set | test set]
+			
 	|------	frequency
+	
 		|------	log base [2 | e]
+		
 		|------	P(unigram) [total occurrence of target *w* | total occurrence of target *w* / sum of total occurrence of each word]
+		
 		|------	dataset [training set | test set]
+		
 	|------	word length \{character | phoneme | syllable\}
+	
 |------	model \{ngram model | RNN model | RNNG model\}
+
 |------	corpora \{google-web-ngram corpora | google-book-ngram corpora | 1T benchmark corpora\}
+
 |------	dataset specifications \{size & ±lower_case\{±captilized_case\} & ±alphabetic & word_frequency(most frequent n words | min_count clip) & ±OPUS(in OPUS OpenSubtitles corpora | not) & ±pho-syl(in both CMU phoneme corpora and celex syllable corpora | not) & POS\}
+
 |------	binning specifications 
+
 	|------	bin [2% of the lexicon | lower bound of float-to-int]
+	
 	|------	error_bar [SE | SD]
+	
 |------	spearman specifications \{±partial-out(partial out the influence of the other variable | not)\}
+
 
 RNN replication: (slides 3.0)
 defination of each item in the formulas:
