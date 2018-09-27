@@ -25,13 +25,10 @@ So we turn back to try to reproduce the work and then scrutinize each prerequisi
 
 prerequisites tree \{options\} [options that are easily mistaken]
 |------	defination of each item in the formulas
-	t|------	information
-	
-		|------	log base [2 | e] 
-		
-		|------	N [total categories of context for target *w* | total occurrence of target *w*]
-		
-		|------	w 
+>	|------	information
+>		|------	log base [2 | e] 
+>			|------	N [total categories of context for target *w* | total occurrence of target *w*]
+>				|------	w 
 		
 		|------	ci \{previous n-1 words of the target *w* | all the previous words of the target *w*\}
 		
