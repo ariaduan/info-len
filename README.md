@@ -266,6 +266,18 @@ specification word lists:
 			*python3 1gm_google_book_sort.py [path]/google-books-v2/eng-us-all/google-books-eng-us-all-20120701-1gram.zs ../corpora_and_texts_obtained/OPUS_word_list*  
   
 		The obtained *1gm_google_book_sort_OPUS_word_list* containing words that appear in both google-book-ngram corpora and OPUS corpora sorted by words frequency will in *corpora_and_texts_obtained* folder.   
+		
+	3) Get book_1gm_for_POS with book_1gm_and for_POS.py
+		Run  *book_1gm_for_POS.py* under *specification* folder. The obtained *book_1gm_word_list* and *book_1gm_for_POS* will be in *corpora_and_texts_obtained* folder.
+
+	4) Get book_1gm_POS with stanford-postagger.sh
+		Run following command to get *replication_POS* and *pho_syl_POS* text which contains tags for each word in these word lists:  
+  
+			*cd [path1]/stanford-postagger-full*  
+			  
+			*./stanford-postagger.sh models/wsj-0-18-left3words-distsim.tagger [path2]/corpora_and_texts_obtained/book_1gm_for_POS > [path2]/corpora_and_texts_obtained/book_1gm_POS*
+			
+
   
 	  
   
