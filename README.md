@@ -407,9 +407,19 @@ gereralization ability test:
   
 		Run *[n]gm_google_book_merge.py* under *replication* folder with command: (n = 2/3/4)  
   
-			python [n]gm_google_book_merge.py [path]/google-books-v2/eng-us-all/google-books-eng-us-all-20120701-[n]gram.zs ../corpora_and_texts_obtained/replication_word_list ../corpora_and_texts_obtained/replication_POS_word_list ../corpora_and_texts_obtained/pho_syl_len_word_list --language en --LOO True  
+			python [n]gm_google_book_merge.py [path]/google-books-v2/eng-us-all/google-books-eng-us-all-20120701-[n]gram.zs ../corpora_and_texts_obtained/replication_word_list ../corpora_and_texts_obtained/replication_POS_word_list ../corpora_and_texts_obtained/pho_syl_len_word_list --language en --LOO True
+		
+	The frequency clip specification for this is the most frequent 25000 google-book-ngram words.
+		
+	2) Get [n]gm_book_merge[_leaveone], [n]gm_book_merge[_leaveone]_bin_pair.csv, [n]gm_book_merge[_leaveone]_bin_type.csv,and [n]gm_book_merge[_leaveone]_bin_all.csv with [n]gm_merge.py:  
+  
+		Run *[n]gm_google_book_merge.py* under *replication* folder with command: (n = 2/3/4)  
+  
+			python3 2gm_google_book_merge.py /om/data/public/corpora/google-books-v2/eng-us-all/google-books-eng-us-all-20120701-2gram.zs ../corpora_and_texts_obtained/book_1gm_word_list ../corpora_and_texts_obtained/book_1gm_POS_word_list ../corpora_and_texts_obtained/pho_syl_len_word_list --language book --LOO True
 	  
-	2) Plot with plot.Rmd  
+	 The frequency clip specification for this is the most frequent 25000 google-book-ngram words. 
+	  
+	3) Plot with plot.Rmd  
 		Run *corpora adaptation* section of *plot.Rmd* in R Studio.  
   
 3. multilingual adaptation: (chinese)  
