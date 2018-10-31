@@ -220,7 +220,7 @@ This is used to see if the POS type for each word has influence on word length.
 **Run the following command under the master repository**
 This section is used for ngram reproduction.
 ```
-cd replication
+cd reproduction
 ```
 #### Basic test  
 1) Get \[n\]gm_en_merge\[\_leaveone\], \[n\]gm_en_merge\[\_leaveone\]\_bin_pair.csv, \[n\]gm_en_merge\[\_leaveone\]\_bin_type.csv,and \[n\]gm_en_merge\[\_leaveone\]\_bin_all.csv with \[n\]gm_merge.py(On MIT Openmind the [path] is **/om/data/public/info-len**):  
@@ -285,7 +285,7 @@ pass
 **Run the following command under the master repository**
 This section is used for adaptation evaluation.
 ```
-cd specification
+cd adaptation_evaluation
 ``` 
 1) Get [n]gm_en_merge[\_leaveone], [n]gm_en_merge[\_leaveone]\_bin_pair.csv, [n]gm_en_merge[\_leaveone]\_bin_type.csv,and [n]gm_en_merge[\_leaveone]\_bin_all.csv with [n]gm_merge.py(On MIT Openmind the [path] is **/om/data/public/info-len**): 
 ```
