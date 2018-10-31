@@ -1,0 +1,548 @@
+# Import ggplot
+```{r}
+library(ggplot2)
+```
+
+
+# Add the following functions
+```{r}
+## Gives count, mean, standard deviation, standard error of the mean, and confidence interval (default 95%).
+##   data: a data frame.
+##   measurevar: the name of a column that contains the variable to be summariezed
+##   groupvars: a vector containing names of columns that contain grouping variables
+##   na.rm: a boolean that indicates whether to ignore NA's
+##   conf.interval: the percent range of the confidence interval (default is 95%)
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+    library(plyr)
+
+    # New version of length which can handle NA's: if na.rm==T, don't count them
+    length2 <- function (x, na.rm=FALSE) {
+        if (na.rm) sum(!is.na(x))
+        else       length(x)
+    }
+
+    # This does the summary. For each group's data frame, return a vector with
+    # N, mean, and sd
+    datac <- ddply(data, groupvars, .drop=.drop,
+      .fun = function(xx, col) {
+        c(N    = length2(xx[[col]], na.rm=na.rm),
+          mean = mean   (xx[[col]], na.rm=na.rm),
+          sd   = sd     (xx[[col]], na.rm=na.rm)
+        )
+      },
+      measurevar
+    )
+
+    # Rename the "mean" column    
+    datac <- rename(datac, c("mean" = measurevar))
+
+    datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+
+    # Confidence interval multiplier for standard error
+    # Calculate t-statistic for confidence interval: 
+    # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+    ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+    datac$ci <- datac$se * ciMult
+
+    return(datac)
+}
+
+## Norms the data within specified groups in a data frame; it normalizes each
+## subject (identified by idvar) so that they have the same mean, within each group
+## specified by betweenvars.
+##   data: a data frame.
+##   idvar: the name of a column that identifies each subject (or matched subjects)
+##   measurevar: the name of a column that contains the variable to be summariezed
+##   betweenvars: a vector containing names of columns that are between-subjects variables
+##   na.rm: a boolean that indicates whether to ignore NA's
+normDataWithin <- function(data=NULL, idvar, measurevar, betweenvars=NULL,
+                           na.rm=FALSE, .drop=TRUE) {
+    library(plyr)
+
+    # Measure var on left, idvar + between vars on right of formula.
+    data.subjMean <- ddply(data, c(idvar, betweenvars), .drop=.drop,
+     .fun = function(xx, col, na.rm) {
+        c(subjMean = mean(xx[,col], na.rm=na.rm))
+      },
+      measurevar,
+      na.rm
+    )
+
+    # Put the subject means with original data
+    data <- merge(data, data.subjMean)
+
+    # Get the normalized data in a new column
+    measureNormedVar <- paste(measurevar, "_norm", sep="")
+    data[,measureNormedVar] <- data[,measurevar] - data[,"subjMean"] +
+                               mean(data[,measurevar], na.rm=na.rm)
+
+    # Remove this subject mean column
+    data$subjMean <- NULL
+
+    return(data)
+}
+
+## Summarizes data, handling within-subjects variables by removing inter-subject variability.
+## It will still work if there are no within-S variables.
+## Gives count, un-normed mean, normed mean (with same between-group mean),
+##   standard deviation, standard error of the mean, and confidence interval.
+## If there are within-subject variables, calculate adjusted values using method from Morey (2008).
+##   data: a data frame.
+##   measurevar: the name of a column that contains the variable to be summariezed
+##   betweenvars: a vector containing names of columns that are between-subjects variables
+##   withinvars: a vector containing names of columns that are within-subjects variables
+##   idvar: the name of a column that identifies each subject (or matched subjects)
+##   na.rm: a boolean that indicates whether to ignore NA's
+##   conf.interval: the percent range of the confidence interval (default is 95%)
+summarySEwithin <- function(data=NULL, measurevar, betweenvars=NULL, withinvars=NULL,
+                            idvar=NULL, na.rm=FALSE, conf.interval=.95, .drop=TRUE) {
+
+  # Ensure that the betweenvars and withinvars are factors
+  factorvars <- vapply(data[, c(betweenvars, withinvars), drop=FALSE],
+    FUN=is.factor, FUN.VALUE=logical(1))
+
+  if (!all(factorvars)) {
+    nonfactorvars <- names(factorvars)[!factorvars]
+    message("Automatically converting the following non-factors to factors: ",
+            paste(nonfactorvars, collapse = ", "))
+    data[nonfactorvars] <- lapply(data[nonfactorvars], factor)
+  }
+
+  # Get the means from the un-normed data
+  datac <- summarySE(data, measurevar, groupvars=c(betweenvars, withinvars),
+                     na.rm=na.rm, conf.interval=conf.interval, .drop=.drop)
+
+  # Drop all the unused columns (these will be calculated with normed data)
+  datac$sd <- NULL
+  datac$se <- NULL
+  datac$ci <- NULL
+
+  # Norm each subject's data
+  ndata <- normDataWithin(data, idvar, measurevar, betweenvars, na.rm, .drop=.drop)
+
+  # This is the name of the new column
+  measurevar_n <- paste(measurevar, "_norm", sep="")
+
+  # Collapse the normed data - now we can treat between and within vars the same
+  ndatac <- summarySE(ndata, measurevar_n, groupvars=c(betweenvars, withinvars),
+                      na.rm=na.rm, conf.interval=conf.interval, .drop=.drop)
+
+  # Apply correction from Morey (2008) to the standard error and confidence interval
+  #  Get the product of the number of conditions of within-S variables
+  nWithinGroups    <- prod(vapply(ndatac[,withinvars, drop=FALSE], FUN=nlevels,
+                           FUN.VALUE=numeric(1)))
+  correctionFactor <- sqrt( nWithinGroups / (nWithinGroups-1) )
+
+  # Apply the correction factor
+  ndatac$sd <- ndatac$sd * correctionFactor
+  ndatac$se <- ndatac$se * correctionFactor
+  ndatac$ci <- ndatac$ci * correctionFactor
+
+  # Combine the un-normed means with the normed results
+  merge(datac, ndatac)
+}
+```
+# catalog
+
+# RNN replication
+############################################
+# (frequency clip by changing cutoff to set min_cnt)
+
+# phoneme-syllable test
+############################################
+
+# normal distribution test
+############################################
+
+# POS test
+############################################
+
+# reproduction
+############################################
+
+# frequency clip evaluation
+############################################
+
+# corpora adaptation
+############################################
+
+
+```{r}
+```
+
+
+# RNN replication
+############################################
+# frequency clip evaluation
+# char
+# phoneme-syllable test
+# normal distribution test
+# POS test
+
+
+```{r}
+# (test frequency clip by changing cutoff to set min_cnt)
+# min_cnt
+cutoff.cnt.1 <- 1
+cutoff.cnt.2 <- 2
+cutoff.cnt.3 <- 3
+cutoff.cnt.4 <- 4
+cutoff.cnt.5 <- 5
+cutoff.cnt.6 <- 6
+cutoff.cnt.10 <- 10
+cutoff.cnt.20 <- 20
+cutoff.cnt.30 <- 30
+cutoff.cnt.40 <- 40
+cutoff.cnt.50 <- 50
+cutoff.cnt.60 <- 60
+cutoff.cnt.70 <- 70
+cutoff.cnt.80 <- 80
+cutoff.cnt.90 <- 90
+cutoff.cnt.100 <- 100
+cutoff.cnt.200 <- 200
+cutoff.cnt.400 <- 400
+cutoff.cnt.800 <- 800
+cutoff.cnt.1000 <- 1000
+cutoff.cnt.2000 <- 2000
+cutoff.cnt.3000 <- 3000
+cutoff.cnt.4000 <- 4000
+cutoff.cnt.5000 <- 5000
+cutoff.cnt.10000 <- 10000
+cutoff.cnt.100000 <- 100000
+cutoff.cnt.1000000 <- 1000000
+cutoff.cnt.10000000 <- 10000000
+cutoff.cnt.100000000 <- 100000000
+cutoff.cnt.1000000000 <- 1000000000
+cutoff.cnt.10000000000 <- 10000000000
+```
+
+```{r}
+# read in RNN files
+RNN.pair.60 <- read.csv("[path]/corpora_and_texts_obtained/RNN_en_merge_60000_bin_pair.csv")
+RNN.type.60 <- read.csv("[path]/corpora_and_texts_obtained/RNN_en_merge_60000_bin_type.csv")
+RNN.all.60 <- read.csv("[path]/corpora_and_texts_obtained/RNN_en_merge_60000_bin_all.csv")
+RNN.pair.30 <- read.csv("[path]/corpora_and_texts_obtained/RNN_en_merge_30000_bin_pair.csv")
+RNN.type.30 <- read.csv("[path]/corpora_and_texts_obtained/RNN_en_merge_30000_bin_type.csv")
+RNN.all.30 <- read.csv("[path]/corpora_and_texts_obtained/RNN_en_merge_30000_bin_all.csv")
+RNN.pair.15 <- read.csv("[path]/corpora_and_texts_obtained/RNN_en_merge_15000_bin_pair.csv")
+RNN.type.15 <- read.csv("[path]/corpora_and_texts_obtained/RNN_en_merge_15000_bin_type.csv")
+RNN.all.15 <- read.csv("[path]/corpora_and_texts_obtained/RNN_en_merge_15000_bin_all.csv")
+RNN.pair.5 <- read.csv("[path]/corpora_and_texts_obtained/RNN_en_merge_5000_bin_pair.csv")
+RNN.type.5 <- read.csv("[path]/corpora_and_texts_obtained/RNN_en_merge_5000_bin_type.csv")
+RNN.all.5 <- read.csv("[path]/corpora_and_texts_obtained/RNN_en_merge_5000_bin_all.csv")
+
+```
+
+```{r}
+# char
+# spot(try: replace cnt with other number)
+ggplot(subset(RNN.type.60,cnt>=cutoff.cnt.20),aes(x=value_float,y=len,color = type)) + geom_point() + geom_smooth() + facet_wrap(~type); ggsave("[path]/image/RNN/char/spot/60_20.pdf")
+with(subset(RNN.pair.60,cnt>=cutoff.cnt.20),cor(info_float,len,method="spearman"))
+with(subset(RNN.pair.60,cnt>=cutoff.cnt.20),cor(freq_float,len,method="spearman"))
+with(subset(RNN.pair.60,cnt>=cutoff.cnt.20),cor(info_float,freq_float,method="spearman"))
+
+# errorbar_int
+c <- summarySE(subset(RNN.type.60,cnt>=cutoff.cnt.20), measurevar="len", groupvars=c("type","value_int"));ggplot(c, aes(x=value_int, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/RNN/char/bar/int_60_20.pdf")
+
+# errorbar_bin
+c <- summarySE(subset(RNN.type.60,cnt>=cutoff.cnt.20), measurevar="len", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/RNN/char/bar/bin_60_20.pdf")
+
+# histfit
+ggplot(subset(RNN.all.60,cnt>=cutoff.cnt.20),aes(x=value_float, fill=type)) + geom_histogram(binwidth=.5, alpha=.5, position="identity"); ggsave("[path]/image/RNN/char/hist/60_20.pdf")
+```
+
+
+# phoneme-syllable test
+############################################
+
+
+```{r}
+# phoneme
+# spot
+ggplot(subset(RNN.type.60,cnt>=cutoff.cnt.20),aes(x=value_float,y=pho,color = type)) + geom_point() + geom_smooth() + facet_wrap(~type); ggsave("[path]/image/RNN/pho/spot/60_20.pdf")
+with(subset(RNN.pair.60,cnt>=cutoff.cnt.20),cor(info_float,pho,method="spearman"))
+with(subset(RNN.pair.60,cnt>=cutoff.cnt.20),cor(freq_float,pho,method="spearman"))
+with(subset(RNN.pair.60,cnt>=cutoff.cnt.20),cor(info_float,freq_float,method="spearman"))
+
+# errorbar_int
+c <- summarySE(subset(RNN.type.60,cnt>=cutoff.cnt.20), measurevar="pho", groupvars=c("type","value_int"));ggplot(c, aes(x=value_int, y=pho, colour=type)) + geom_errorbar(aes(ymin=pho-se, ymax=pho+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/RNN/pho/bar/int_60_20.pdf")
+
+# errorbar_bin
+c <- summarySE(subset(RNN.type.60,cnt>=cutoff.cnt.20), measurevar="pho", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=pho, colour=type)) + geom_errorbar(aes(ymin=pho-se, ymax=pho+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/RNN/pho/bar/bin_60_20.pdf")
+
+# histfit
+ggplot(subset(RNN.all.60,cnt>=cutoff.cnt.20),aes(x=value_float, fill=type)) + geom_histogram(binwidth=.5, alpha=.5, position="identity"); ggsave("[path]/image/RNN/pho/hist/60_20.pdf")
+```
+
+```{r}
+# syllable
+# spot
+ggplot(subset(RNN.type.60,cnt>=cutoff.cnt.20),aes(x=value_float,y=syl,color = type)) + geom_point() + geom_smooth() + facet_wrap(~type); ggsave("[path]/image/RNN/syl/spot/60_20.pdf")
+with(subset(RNN.pair.60,cnt>=cutoff.cnt.20),cor(info_float,syl,method="spearman"))
+with(subset(RNN.pair.60,cnt>=cutoff.cnt.20),cor(freq_float,syl,method="spearman"))
+with(subset(RNN.pair.60,cnt>=cutoff.cnt.20),cor(info_float,freq_float,method="spearman"))
+
+# errorbar_int
+c <- summarySE(subset(RNN.type.60,cnt>=cutoff.cnt.20), measurevar="syl", groupvars=c("type","value_int"));ggplot(c, aes(x=value_int, y=syl, colour=type)) + geom_errorbar(aes(ymin=syl-se, ymax=syl+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/RNN/syl/bar/int_60_20.pdf")
+
+# errorbar_bin
+c <- summarySE(subset(RNN.type.60,cnt>=cutoff.cnt.20), measurevar="syl", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=syl, colour=type)) + geom_errorbar(aes(ymin=syl-se, ymax=syl+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/RNN/syl/bar/bin_60_20.pdf")
+
+# histfit
+ggplot(subset(RNN.all.60,cnt>=cutoff.cnt.20),aes(x=value_float, fill=type)) + geom_histogram(binwidth=.5, alpha=.5, position="identity"); ggsave("[path]/image/RNN/syl/hist/60_20.pdf")
+```
+
+
+# normal distribution test
+############################################
+
+
+```{r}
+# normal test histfit
+ggplot(subset(RNN.type.60, p!=-1),aes(x=p)) + geom_histogram(binwidth=.5, alpha=.5, position="identity");ggsave("[path]/image/RNN/gaussian/RNN_p.pdf")
+ggplot(subset(RNN.type.60, p!=-1),aes(x=h)) + geom_histogram(binwidth=.5, alpha=.5, position="identity");ggsave("[path]/image/RNN/gaussian/RNN_h.pdf")
+ggplot(subset(RNN.type.60, p!=-1),aes(x=p, fill=POS)) + geom_histogram(binwidth=.5, alpha=.5, position="identity") + facet_wrap(~POS);ggsave("[path]/image/RNN/gaussian/RNN_p_facet.pdf")
+ggplot(subset(RNN.type.60, p!=-1),aes(x=h, fill=POS)) + geom_histogram(binwidth=.5, alpha=.5, position="identity") + facet_wrap(~POS);ggsave("[path]/image/RNN/gaussian/RNN_h_facet.pdf")
+```
+
+```{r}
+# normal distribution influence
+
+# errorbar_int
+c <- summarySE(subset(RNN.type.60,h==1), measurevar="len", groupvars=c("type","value_int"));ggplot(c, aes(x=value_int, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/RNN/gaussian/pos/bar/int_char_60_1.pdf")
+with(subset(RNN.pair.60,h==1),cor(info_float,len,method="spearman"))
+with(subset(RNN.pair.60,h==1),cor(freq_float,len,method="spearman"))
+with(subset(RNN.pair.60,h==1),cor(info_float,freq_float,method="spearman"))
+
+c <- summarySE(subset(RNN.type.60,h==0), measurevar="len", groupvars=c("type","value_int"));ggplot(c, aes(x=value_int, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/RNN/gaussian/neg/bar/int_char_60_1.pdf")
+with(subset(RNN.pair.60,h==0),cor(info_float,len,method="spearman"))
+with(subset(RNN.pair.60,h==0),cor(freq_float,len,method="spearman"))
+with(subset(RNN.pair.60,h==0),cor(info_float,freq_float,method="spearman"))
+
+# errorbar_bin
+c <- summarySE(subset(RNN.type.60,h==1), measurevar="len", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/RNN/gaussian/pos/bar/bin_char_60_1.pdf")
+
+c <- summarySE(subset(RNN.type.60,h==0), measurevar="len", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/RNN/gaussian/neg/bar/bin_char_60_1.pdf")
+
+```
+
+
+# POS test
+############################################
+
+
+```{r}
+RNN.pair.POS.60.NN <- subset(RNN.pair.60,POS=="NN"|POS=="NNS")
+RNN.pair.POS.60.JJ <- subset(RNN.pair.60,POS=="JJ"|POS=="JJR"|POS=="JJS")
+RNN.pair.POS.60.VB <- subset(RNN.pair.60,POS=="VB"|POS=="VBD"|POS=="VBP"|POS="VBG"|POS="VBN")
+RNN.type.POS.60.NN <- subset(RNN.type.60,POS=="NN"|POS=="NNS")
+RNN.type.POS.60.JJ <- subset(RNN.type.60,POS=="JJ"|POS=="JJR"|POS=="JJS")
+RNN.type.POS.60.VB <- subset(RNN.type.60,POS=="VB"|POS=="VBD"|POS=="VBP"|POS="VBG"|POS="VBN")
+RNN.all.POS.60.NN <- subset(RNN.all.60,POS=="NN"|POS=="NNS")
+RNN.all.POS.60.JJ <- subset(RNN.all.60,POS=="JJ"|POS=="JJR"|POS=="JJS")
+RNN.all.POS.60.VB <- subset(RNN.all.60,POS=="VB"|POS=="VBD"|POS=="VBP"|POS="VBG"|POS="VBN")
+
+#errorbar_bin(try: replace cnt with other number)
+c <- summarySE(subset(RNN.type.POS.60.NN,cnt>=cutoff.cnt.1), measurevar="len", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/RNN/POS/NN/bar/bin_60_1.pdf")
+
+c <- summarySE(subset(RNN.type.POS.60.JJ,cnt>=cutoff.cnt.1), measurevar="len", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/RNN/POS/JJ/bar/bin_60_1.pdf")
+
+c <- summarySE(subset(RNN.type.POS.60.VB,cnt>=cutoff.cnt.1), measurevar="len", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/RNN/POS/VB/bar/bin_60_1.pdf")
+
+```
+
+
+# Ngram reproduction
+############################################
+# frequency clip evaluation
+# char
+# phoneme-syllable test
+# normal distribution test
+# POS test
+
+```{r}
+# read in google-web-ngram files
+gm2.pair <- read.csv("[path]/corpora_and_texts_obtained/2gm_merge_bin_pair.csv")
+gm2.type <- read.csv("[path]/corpora_and_texts_obtained/2gm_merge_bin_type.csv")
+gm2.all <- read.csv("[path]/corpora_and_texts_obtained/2gm_merge_bin_all.csv")
+gm3.pair <- read.csv("[path]/corpora_and_texts_obtained/3gm_merge_bin_pair.csv")
+gm3.type <- read.csv("[path]/corpora_and_texts_obtained/3gm_merge_bin_type.csv")
+gm3.all <- read.csv("[path]/corpora_and_texts_obtained/3gm_merge_bin_all.csv")
+gm4.pair <- read.csv("[path]/corpora_and_texts_obtained/4gm_merge_bin_pair.csv")
+gm4.type <- read.csv("[path]/corpora_and_texts_obtained/4gm_merge_bin_type.csv")
+gm4.all <- read.csv("[path]/corpora_and_texts_obtained/4gm_merge_bin_all.csv")
+```
+
+```{r}
+# (test frequency clip by changing read_in files, 50000/75000/10000)
+gm2.pair <- read.csv("[path]/corpora_and_texts_obtained/2gm_merge_50000_bin_pair.csv")
+gm2.type <- read.csv("[path]/corpora_and_texts_obtained/2gm_merge_50000_bin_type.csv")
+gm2.all <- read.csv("[path]/corpora_and_texts_obtained/2gm_merge_50000_bin_all.csv")
+```
+
+```{r}
+# char
+# spot(try: replace cnt with other number)
+ggplot(subset(gm2.type,cnt>=cutoff.cnt.20),aes(x=value_float,y=len,color = type)) + geom_point() + geom_smooth() + facet_wrap(~type); ggsave("[path]/image/2gm/char/spot/60_20.pdf")
+with(subset(gm2.pair,cnt>=cutoff.cnt.20),cor(info_float,len,method="spearman"))
+with(subset(gm2.pair,cnt>=cutoff.cnt.20),cor(freq_float,len,method="spearman"))
+with(subset(gm2.pair,cnt>=cutoff.cnt.20),cor(info_float,freq_float,method="spearman"))
+
+# errorbar_int
+c <- summarySE(subset(gm2.type,cnt>=cutoff.cnt.20), measurevar="len", groupvars=c("type","value_int"));ggplot(c, aes(x=value_int, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/char/bar/int_60_20.pdf")
+
+# errorbar_bin
+c <- summarySE(subset(gm2.type,cnt>=cutoff.cnt.20), measurevar="len", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/char/bar/bin_60_20.pdf")
+
+# histfit
+ggplot(subset(gm2.all,cnt>=cutoff.cnt.20),aes(x=value_float, fill=type)) + geom_histogram(binwidth=.5, alpha=.5, position="identity"); ggsave("[path]/image/2gm/char/hist/60_20.pdf")
+```
+
+
+# phoneme-syllable test
+############################################
+
+
+```{r}
+# phoneme
+# spot
+ggplot(subset(gm2.type,cnt>=cutoff.cnt.20),aes(x=value_float,y=pho,color = type)) + geom_point() + geom_smooth() + facet_wrap(~type); ggsave("[path]/image/2gm/pho/spot/60_20.pdf")
+with(subset(gm2.pair,cnt>=cutoff.cnt.20),cor(info_float,pho,method="spearman"))
+with(subset(gm2.pair,cnt>=cutoff.cnt.20),cor(freq_float,pho,method="spearman"))
+with(subset(gm2.pair,cnt>=cutoff.cnt.20),cor(info_float,freq_float,method="spearman"))
+
+# errorbar_int
+c <- summarySE(subset(gm2.type,cnt>=cutoff.cnt.20), measurevar="pho", groupvars=c("type","value_int"));ggplot(c, aes(x=value_int, y=pho, colour=type)) + geom_errorbar(aes(ymin=pho-se, ymax=pho+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/pho/bar/int_60_20.pdf")
+
+# errorbar_bin
+c <- summarySE(subset(gm2.type,cnt>=cutoff.cnt.20), measurevar="pho", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=pho, colour=type)) + geom_errorbar(aes(ymin=pho-se, ymax=pho+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/pho/bar/bin_60_20.pdf")
+
+# histfit
+ggplot(subset(gm2.all,cnt>=cutoff.cnt.20),aes(x=value_float, fill=type)) + geom_histogram(binwidth=.5, alpha=.5, position="identity"); ggsave("[path]/image/2gm/pho/hist/60_20.pdf")
+```
+
+```{r}
+# syllable
+# spot
+ggplot(subset(gm2.type,cnt>=cutoff.cnt.20),aes(x=value_float,y=syl,color = type)) + geom_point() + geom_smooth() + facet_wrap(~type); ggsave("[path]/image/2gm/syl/spot/60_20.pdf")
+with(subset(gm2.pair,cnt>=cutoff.cnt.20),cor(info_float,syl,method="spearman"))
+with(subset(gm2.pair,cnt>=cutoff.cnt.20),cor(freq_float,syl,method="spearman"))
+with(subset(gm2.pair,cnt>=cutoff.cnt.20),cor(info_float,freq_float,method="spearman"))
+
+# errorbar_int
+c <- summarySE(subset(gm2.type,cnt>=cutoff.cnt.20), measurevar="syl", groupvars=c("type","value_int"));ggplot(c, aes(x=value_int, y=syl, colour=type)) + geom_errorbar(aes(ymin=syl-se, ymax=syl+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/syl/bar/int_60_20.pdf")
+
+# errorbar_bin
+c <- summarySE(subset(gm2.type,cnt>=cutoff.cnt.20), measurevar="syl", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=syl, colour=type)) + geom_errorbar(aes(ymin=syl-se, ymax=syl+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/syl/bar/bin_60_20.pdf")
+
+# histfit
+ggplot(subset(gm2.all,cnt>=cutoff.cnt.20),aes(x=value_float, fill=type)) + geom_histogram(binwidth=.5, alpha=.5, position="identity"); ggsave("[path]/image/2gm/syl/hist/60_20.pdf")
+```
+
+
+# normal distribution test
+############################################
+
+
+```{r}
+# normal test histfit
+ggplot(subset(gm2.type, p!=-1),aes(x=p)) + geom_histogram(binwidth=.5, alpha=.5, position="identity");ggsave("[path]/image/2gm/gaussian/gm2_p.pdf")
+ggplot(subset(gm2.type, p!=-1),aes(x=h)) + geom_histogram(binwidth=.5, alpha=.5, position="identity");ggsave("[path]/image/2gm/gaussian/gm2_h.pdf")
+ggplot(subset(gm2.type, p!=-1),aes(x=p, fill=POS)) + geom_histogram(binwidth=.5, alpha=.5, position="identity") + facet_wrap(~POS);ggsave("[path]/image/2gm/gaussian/gm2_p_facet.pdf")
+ggplot(subset(gm2.type, p!=-1),aes(x=h, fill=POS)) + geom_histogram(binwidth=.5, alpha=.5, position="identity") + facet_wrap(~POS);ggsave("[path]/image/2gm/gaussian/gm2_h_facet.pdf")
+```
+
+```{r}
+# normal distribution influence
+
+# errorbar_int
+c <- summarySE(subset(gm2.type,h==1), measurevar="len", groupvars=c("type","value_int"));ggplot(c, aes(x=value_int, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/gaussian/pos/bar/int_char_60_1.pdf")
+with(subset(gm2.type,h==1),cor(info_float,len,method="spearman"))
+with(subset(gm2.type,h==1),cor(freq_float,len,method="spearman"))
+with(subset(gm2.type,h==1),cor(info_float,freq_float,method="spearman"))
+
+c <- summarySE(subset(gm2.type,h==0), measurevar="len", groupvars=c("type","value_int"));ggplot(c, aes(x=value_int, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/gaussian/neg/bar/int_char_60_1.pdf")
+with(subset(gm2.type,h==0),cor(info_float,len,method="spearman"))
+with(subset(gm2.type,h==0),cor(freq_float,len,method="spearman"))
+with(subset(gm2.type,h==0),cor(info_float,freq_float,method="spearman"))
+
+# errorbar_bin
+c <- summarySE(subset(gm2.type,h==1), measurevar="len", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/gaussian/pos/bar/bin_char_60_1.pdf")
+
+c <- summarySE(subset(gm2.type,h==0), measurevar="len", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/gaussian/neg/bar/bin_char_60_1.pdf")
+
+```
+
+
+# POS test
+############################################
+
+
+```{r}
+gm2.pair.POS.60.NN <- subset(gm2.pair,POS=="NN"|POS=="NNS")
+gm2.pair.POS.60.JJ <- subset(gm2.pair,POS=="JJ"|POS=="JJR"|POS=="JJS")
+gm2.pair.POS.60.VB <- subset(gm2.pair,POS=="VB"|POS=="VBD"|POS=="VBP"|POS="VBG"|POS="VBN")
+gm2.type.POS.60.NN <- subset(gm2.type,POS=="NN"|POS=="NNS")
+gm2.type.POS.60.JJ <- subset(gm2.type,POS=="JJ"|POS=="JJR"|POS=="JJS")
+gm2.type.POS.60.VB <- subset(gm2.type,POS=="VB"|POS=="VBD"|POS=="VBP"|POS="VBG"|POS="VBN")
+gm2.all.POS.60.NN <- subset(gm2.all,POS=="NN"|POS=="NNS")
+gm2.all.POS.60.JJ <- subset(gm2.all,POS=="JJ"|POS=="JJR"|POS=="JJS")
+gm2.all.POS.60.VB <- subset(gm2.all,POS=="VB"|POS=="VBD"|POS=="VBP"|POS="VBG"|POS="VBN")
+
+#errorbar_int(try: replace cnt with other number)
+c <- summarySE(subset(gm2.type.POS.60.NN,cnt>=cutoff.cnt.1), measurevar="len", groupvars=c("type","value_int"));ggplot(c, aes(x=value_int, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/POS/NN/bar/int_60_1.pdf")
+with(subset(gm2.type.POS.60.NN,cnt>=cutoff.cnt.1),cor(info_float,len,method="spearman"))
+with(subset(gm2.type.POS.60.NN,cnt>=cutoff.cnt.1),cor(freq_float,len,method="spearman"))
+with(subset(gm2.type.POS.60.NN,cnt>=cutoff.cnt.1),cor(info_float,freq_float,method="spearman"))
+
+c <- summarySE(subset(gm2.type.POS.60.JJ,cnt>=cutoff.cnt.1), measurevar="len", groupvars=c("type","value_int"));ggplot(c, aes(x=value_int, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/POS/JJ/bar/int_60_1.pdf")
+with(subset(gm2.type.POS.60.JJ,cnt>=cutoff.cnt.1),cor(info_float,len,method="spearman"))
+with(subset(gm2.type.POS.60.JJ,cnt>=cutoff.cnt.1),cor(freq_float,len,method="spearman"))
+with(subset(gm2.type.POS.60.JJ,cnt>=cutoff.cnt.1),cor(info_float,freq_float,method="spearman"))
+
+c <- summarySE(subset(gm2.type.POS.60.VB,cnt>=cutoff.cnt.1), measurevar="len", groupvars=c("type","value_int"));ggplot(c, aes(x=value_int, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/POS/VB/bar/int_60_1.pdf")
+with(subset(gm2.type.POS.60.VB,cnt>=cutoff.cnt.1),cor(info_float,len,method="spearman"))
+with(subset(gm2.type.POS.60.VB,cnt>=cutoff.cnt.1),cor(freq_float,len,method="spearman"))
+with(subset(gm2.type.POS.60.VB,cnt>=cutoff.cnt.1),cor(info_float,freq_float,method="spearman"))
+
+#errorbar_bin(try: replace cnt with other number)
+c <- summarySE(subset(gm2.type.POS.60.NN,cnt>=cutoff.cnt.1), measurevar="len", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/POS/NN/bar/bin_60_1.pdf")
+
+c <- summarySE(subset(gm2.type.POS.60.JJ,cnt>=cutoff.cnt.1), measurevar="len", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/POS/JJ/bar/bin_60_1.pdf")
+
+c <- summarySE(subset(gm2.type.POS.60.VB,cnt>=cutoff.cnt.1), measurevar="len", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/2gm/POS/VB/bar/bin_60_1.pdf")
+
+```
+
+
+# corpora adaptation
+############################################
+# char
+
+
+```{r}
+# read in google-book-ngram files
+gm2.pair <- read.csv("[path]/corpora_and_texts_obtained/2gm_google_book_merge_bin_pair.csv")
+gm2.type <- read.csv("[path]/corpora_and_texts_obtained/2gm_google_book_merge_bin_type.csv")
+gm2.all <- read.csv("[path]/corpora_and_texts_obtained/2gm_google_book_merge_bin_all.csv")
+```
+
+```{r}
+# char
+# spot(try: replace cnt with other number)
+ggplot(subset(gm2.type,cnt>=cutoff.cnt.20),aes(x=value_float,y=len,color = type)) + geom_point() + geom_smooth() + facet_wrap(~type); ggsave("[path]/image/google_book/char/spot/60_20.pdf")
+with(subset(gm2.pair,cnt>=cutoff.cnt.20),cor(info_float,len,method="spearman"))
+with(subset(gm2.pair,cnt>=cutoff.cnt.20),cor(freq_float,len,method="spearman"))
+with(subset(gm2.pair,cnt>=cutoff.cnt.20),cor(info_float,freq_float,method="spearman"))
+
+# errorbar_int
+c <- summarySE(subset(gm2.type,cnt>=cutoff.cnt.20), measurevar="len", groupvars=c("type","value_int"));ggplot(c, aes(x=value_int, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/google_book/char/bar/int_60_20.pdf")
+
+# errorbar_bin
+c <- summarySE(subset(gm2.type,cnt>=cutoff.cnt.20), measurevar="len", groupvars=c("type","value_bin"));ggplot(c, aes(x=value_bin, y=len, colour=type)) + geom_errorbar(aes(ymin=len-se, ymax=len+se), width=.1) + geom_point() + facet_wrap(~type); ggsave("[path]/image/google_book/char/bar/bin_60_20.pdf")
+
+# histfit
+ggplot(subset(gm2.all,cnt>=cutoff.cnt.20),aes(x=value_float, fill=type)) + geom_histogram(binwidth=.5, alpha=.5, position="identity"); ggsave("[path]/image/google_book/char/hist/60_20.pdf")
+```
+
