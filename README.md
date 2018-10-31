@@ -183,7 +183,7 @@ The obtained **devset_result** text recording surprisal value (infomation value/
 >	talk 10.510600090026855  
 >	sense 17.938188552856445  
 >	. 2.074157953262329  
->	</eos/> -0.0  
+>	<\eos\> -0.0  
 
 
 3) Get **freq_in_train_set** with **freq_in_train_set.py**(On MIT Openmind the [path] is **/om/data/public/info-len**):  
@@ -201,21 +201,21 @@ Here the size can be any number between 1~60000. The obtained **RNN_en_merge_[si
   
 where **info_int** is information value in integer type, **freq_int** is frequency value in integer type, **info_float** is information value in float type, **freq_float** is frequency value in float type, **len** is the orthographic length, **POS** is the part-of-speech tag, **pho** is the phoneme length, **syl** is syllable length, **d** and **p** are D statistic and p-value of normal distribution test on information distribution for each word in all possible contexts. If p<0.05, then **h** is 0, meaning non-normal. Else, **h** is 1, meaning normal. **func** is the specific function used for normal test which varies according to the size of data, i.e., **cnt**. If some value is "-1", then that value is lacked.  
   
-5) Plot with plot.Rmd  
+5) Plot with **plot.Rmd**: 
 Run **RNN replication** section of **plot.Rmd** in R Studio.  
   
 #### Phoneme-syllable test:  
-1) Plot with plot.Rmd  
+1) Plot with **plot.Rmd**: 
 Run **phoneme-syllable test** section of **plot.Rmd** in R Studio. The obtained images will be in image folder.  
 This is used to see if using phoneme or syllable instead of character to measure word length will make a difference.   
   
 #### Gaussian distribution test:  
-1) Plot with plot.Rmd  
+1) Plot with **plot.Rmd**:  
 Run **normal distribution test** section of **plot.Rmd** in R Studio.  
 This is used to see if the distribution of information content in different context for each word has influence on word length.  
   
 #### POS test:  
-1) Plot with plot.Rmd  
+1) Plot with **plot.Rmd**: 
 Run **POS test** section of **plot.Rmd** in R Studio.  
 This is used to see if the POS type for each word has influence on word length.  
   
@@ -226,7 +226,7 @@ This section is used for ngram reproduction.
 cd reproduction
 ```
 #### Basic test  
-1) Get \[n\]gm_en_merge\[\_leaveone\], \[n\]gm_en_merge\[\_leaveone\]\_bin_pair.csv, \[n\]gm_en_merge\[\_leaveone\]\_bin_type.csv,and \[n\]gm_en_merge\[\_leaveone\]\_bin_all.csv with \[n\]gm_merge.py(On MIT Openmind the [path] is **/om/data/public/info-len**):  
+1) Get **\[n\]gm_en_merge\[\_leaveone\]**, **\[n\]gm_en_merge\[\_leaveone\]\_bin_pair.csv**, **\[n\]gm_en_merge\[\_leaveone\]\_bin_type.csv**,and **\[n\]gm_en_merge\[\_leaveone\]\_bin_all.csv** with **\[n\]gm_merge.py**(On MIT Openmind the [path] is **/om/data/public/info-len**):  
 ```  
 python3 2gm_merge.py [path]/google_web_ngrams/data/2gms ../corpora_and_texts_obtained/replication_word_list ../corpora_and_texts_obtained/replication_POS_word_list ../corpora_and_texts_obtained/pho_syl_len_word_list --language en --LOO True
 
@@ -237,21 +237,21 @@ python3 4gm_merge.py [path]/google_web_ngrams/data/4gms ../corpora_and_texts_obt
 
 Remove **--LOO True** if you don't want to use leave-one-out cross validation.'  
 
-2) Plot with plot.Rmd  
+2) Plot with **plot.Rmd**:  
 Run **reproduction** section of **plot.Rmd** in R Studio.  
   
 #### Phoneme-syllable test:  
-1) Plot with plot.Rmd  
+1) Plot with **plot.Rmd**: 
 Run **phoneme-syllable test** section of **plot.Rmd** in R Studio. The obtained images will be in image folder.  
 This is used to see if using phoneme or syllable instead of character to measure word length will make a difference.   
   
 #### Gaussian distribution test:  
-1) Plot with plot.Rmd  
+1) Plot with **plot.Rmd**: 
 Run **normal distribution test** section of **plot.Rmd** in R Studio.  
 This is used to see if the distribution of information content in different context for each word has influence on word length.  
   
 #### POS test:  
-1) Plot with plot.Rmd  
+1) Plot with **plot.Rmd**:  
 Run **POS test** section of **plot.Rmd** in R Studio.  
 This is used to see if the POS type for each word has influence on word length.  
   
@@ -263,7 +263,7 @@ This section is used for prerequisites evaluation.
 cd prerequisites_evaluation
 ``` 
 #### Dataset specification: (frequency clip 50000)  
-1) Get [n]gm_en_merge_50000\[\_leaveone\], \[n\]gm_en_merge_50000[\_leaveone]\_bin_pair.csv, [n]gm_en_merge_50000[\_leaveone]\_bin_type.csv,and [n]gm_en_merge_50000[\_leaveone]\_bin_all.csv with [n]gm_merge_50000.py(On MIT Openmind the [path] is **/om/data/public/info-len**):
+1) Get **[n]gm_en_merge_50000\[\_leaveone\]**, **\[n\]gm_en_merge_50000[\_leaveone]\_bin_pair.csv**, **[n]gm_en_merge_50000[\_leaveone]\_bin_type.csv**,and **[n]gm_en_merge_50000[\_leaveone]\_bin_all.csv** with **[n]gm_merge_50000.py**(On MIT Openmind the [path] is **/om/data/public/info-len**):
 ```  
 python3 2gm_merge_50000.py [path]/google_web_ngrams/data/2gms ../corpora_and_texts_obtained/replication_word_list_50000 ../corpora_and_texts_obtained/replication_POS_word_list_50000 ../corpora_and_texts_obtained/pho_syl_len_word_list --language en --LOO True
 
@@ -273,11 +273,11 @@ python3 4gm_merge_50000.py [path]/google_web_ngrams/data/4gms ../corpora_and_tex
 ```
 Remove **--LOO True** if you don't want to use leave-one-out cross validation.'  
   
-2) Plot with plot.Rmd  
+2) Plot with **plot.Rmd**:  
 Run **frequency clip evaluation** section of **plot.Rmd** in R Studio. Also replace the cutoff number with different number to see the difference.	  
   
 #### Plotting method: (binning)  
-1) Plot with plot.Rmd 
+1) Plot with **plot.Rmd**: 
 Run **errorbar_bin** and **error_int** in each section to see the difference.	  
   
 ### Gereralization ability test:  
@@ -290,7 +290,7 @@ This section is used for adaptation evaluation.
 ```
 cd adaptation_evaluation
 ``` 
-1) Get [n]gm_en_merge[\_leaveone], [n]gm_en_merge[\_leaveone]\_bin_pair.csv, [n]gm_en_merge[\_leaveone]\_bin_type.csv,and [n]gm_en_merge[\_leaveone]\_bin_all.csv with [n]gm_merge.py(On MIT Openmind the [path] is **/om/data/public/info-len**): 
+1) Get **[n]gm_en_merge[\_leaveone]**, **[n]gm_en_merge[\_leaveone]\_bin_pair.csv**, **[n]gm_en_merge[\_leaveone]\_bin_type.csv**,and **[n]gm_en_merge[\_leaveone]\_bin_all.csv** with **[n]gm_merge.py**(On MIT Openmind the [path] is **/om/data/public/info-len**): 
 ```
 python3 2gm_google_book_merge.py [path]/google-books-v2/eng-us-all/google-books-eng-us-all-20120701-2gram.zs ../corpora_and_texts_obtained/replication_word_list ../corpora_and_texts_obtained/replication_POS_word_list ../corpora_and_texts_obtained/pho_syl_len_word_list --language en --LOO True
 
@@ -301,7 +301,7 @@ python3 4gm_google_book_merge.py [path]/google-books-v2/eng-us-all/google-books-
 
 The frequency clip specification for this is the most frequent 25000 google-web-ngram words.
 		
-2) Get [n]gm_book_merge[\_leaveone], [n]gm_book_merge[\_leaveone]\_bin_pair.csv, [n]gm_book_merge[\_leaveone]\_bin_type.csv,and [n]gm_book_merge[\_leaveone]\_bin_all.csv with [n]gm_merge.py(On MIT Openmind the [path] is **/om/data/public/info-len**): 
+2) Get **[n]gm_book_merge[\_leaveone]**, **[n]gm_book_merge[\_leaveone]\_bin_pair.csv**, **[n]gm_book_merge[\_leaveone]\_bin_type.csv**,and **[n]gm_book_merge[\_leaveone]\_bin_all.csv** with **[n]gm_merge.py**(On MIT Openmind the [path] is **/om/data/public/info-len**): 
 ```
 python3 2gm_google_book_merge.py [path]/google-books-v2/eng-us-all/google-books-eng-us-all-20120701-2gram.zs ../corpora_and_texts_obtained/book_1gm_word_list ../corpora_and_texts_obtained/book_1gm_POS_word_list ../corpora_and_texts_obtained/pho_syl_len_word_list --language book --LOO True
 
@@ -312,7 +312,7 @@ python3 4gm_google_book_merge.py [path]/google-books-v2/eng-us-all/google-books-
 
 The frequency clip specification for this is the most frequent 25000 google-book-ngram words. 
 	  
-3) Plot with plot.Rmd  
+3) Plot with **plot.Rmd**:  
 Run **corpora adaptation** section of **plot.Rmd** in R Studio.  
   
 #### Multilingual adaptation: (chinese)  
