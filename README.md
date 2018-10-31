@@ -151,6 +151,9 @@ This section is used for RNN replication.
 ```
 cd RNN
 ```
+
+Download the pretrained [RNN model](), and save it in **RNN/language_models**. 
+
 #### Basic (character-based word length)  
 
 1) Get **devset** for RNN model with **devset.py**: 
