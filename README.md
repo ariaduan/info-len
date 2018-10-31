@@ -68,8 +68,7 @@ This section is used for preparing the word lists for the replication. We sugges
 ```	
 			egg	2	1  
 ```
-
-The latter file will be used as input text to obtain POS tags for each word. Compound words like "wanna" are removed.  
+		The latter file will be used as input text to obtain POS tags for each word. Compound words like "wanna" are removed.  
 	  
 ##### POS  
 1) Get replciation_POS and pho_syl_POS with stanford-postagger.sh  
