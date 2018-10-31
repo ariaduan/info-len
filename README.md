@@ -171,22 +171,22 @@ The obtained **devset** text for test will be in **corpora_and_texts_obtained** 
 python3 language_models/evaluate_target_word_test.py --checkpoint language_models/hidden650_batch128_dropout0.2_lr20.0.pt --surprisalmode True --data language_models/English --prefixfile ../corpora_and_texts_obtained/devset --outf ../corpora_and_texts_obtained/devset_result  
 ```  
 The obtained **devset_result** text recording surprisal value (infomation value/unpreditability) for each word in each sentence in the devset will be in **corporara_and_texts_obtained** folder. The format is:  
-```  
-			Peers 19.51535415649414  
-			fear 19.504806518554688  
-			the 3.9704360961914062  
-			judgement 12.45867919921875  
-			of 1.8514728546142578  
-			their 5.592242240905762  
-			peers 5.140864372253418  
-			and 3.3437328338623047  
-			try 11.75849437713623  
-			to 0.21744504570960999  
-			talk 10.510600090026855  
-			sense 17.938188552856445  
-			. 2.074157953262329  
-			<eos> -0.0  
-```
+  
+	>Peers 19.51535415649414  
+	fear 19.504806518554688  
+	the 3.9704360961914062  
+	judgement 12.45867919921875  
+	of 1.8514728546142578  
+	their 5.592242240905762  
+	peers 5.140864372253418  
+	and 3.3437328338623047  
+	try 11.75849437713623  
+	to 0.21744504570960999  
+	talk 10.510600090026855  
+	sense 17.938188552856445  
+	. 2.074157953262329  
+	<eos> -0.0  
+
 
 3) Get **freq_in_train_set** with **freq_in_train_set.py**(On MIT Openmind the [path] is **/om/data/public/info-len**):  
 ```  
