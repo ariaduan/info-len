@@ -85,7 +85,7 @@ This section is used for preparing the word lists for the replication. We sugges
   
 			./stanford-postagger.sh models/wsj-0-18-left3words-distsim.tagger [path2]/corpora_and_texts_obtained/pho_syl_word_list_for_POS > [path2]/corpora_and_texts_obtained/pho_syl_POS  
 ```
-		The format for these obtained files is:  
+The format for these obtained files is:  
 ```			  
 			the_DT of_IN and_CC to_TO in_IN for_IN is_VBZ on_IN that_DT  
 ```	  
@@ -94,7 +94,7 @@ This section is used for preparing the word lists for the replication. We sugges
 ```  
 			the	DT  
 ```  
-		The format for **pho_syl_len_POS_word_list** is: (word + phoneme_length + syllable_length + POS)  
+The format for **pho_syl_len_POS_word_list** is: (word + phoneme_length + syllable_length + POS)  
 ```			  
 			the	2	1	DT  
 ```  
@@ -162,12 +162,12 @@ This section is used for preparing the word lists for the replication. We sugges
 ```  
 		The obtained **freq_in_train_set** text will be in **corpora_and_texts_obtained** folder.  
   
-4) Get RNN_en_merge_\[size\], RNN_en_merge_\[size\]_bin_pair.csv, RNN_en_merge_\[size\]_bin_type.csv, and RNN_en_merge_\[size\]_bin_all.csv with RNN_merge.py  
+4) Get RNN_en_merge_\[size\], RNN_en_merge_\[size\]\_bin_pair.csv, RNN_en_merge_\[size\]\_bin_type.csv, and RNN_en_merge_\[size\]\_bin_all.csv with RNN_merge.py  
 		Run **RNN_merge.py** under **RNN** folder with following command:  
 ```		  
 			python3 RNN_merge.py --language en --size [size]  
 ```  
-		Here the size can be any number between 1~60000. The obtained **RNN_en_merge_\[size\]**, **RNN_en_merge_\[size\]_bin_pair.csv**, **RNN_en_merge_\[size\]_bin_type.csv**, and **RNN_en_merge_\[size\]_bin_all.csv** texts will be in **corpora_and_texts_obtained** folder.  The format for **RNN_en_merge** is: (word + info_int + freq_int + info_float + freq_float + len + cnt + POS + pho + syl + d + p + h + func)  
+		Here the size can be any number between 1~60000. The obtained **RNN_en_merge_[size]**, **RNN_en_merge_\[size\]\_bin_pair.csv**, **RNN_en_merge_\[size\]\_bin_type.csv**, and **RNN_en_merge_\[size\]\_bin_all.csv** texts will be in **corpora_and_texts_obtained** folder.  The format for **RNN_en_merge** is: (word + info_int + freq_int + info_float + freq_float + len + cnt + POS + pho + syl + d + p + h + func)  
 ```  
 			and	2	5	2.4042419995623083	5.95369407398674	3	8202697422	CC	3	1	0.552565747871	0.0	0	kstest  
 ```  
