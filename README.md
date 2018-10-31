@@ -10,7 +10,7 @@ So we turn back to try to reproduce the work and then scrutinize each prerequisi
 ## Prerequisites
  * [Python 3.6 compiler](https://www.python.org)
  * [staford-postagger-full](https://nlp.stanford.edu/software/stanford-postagger-full-2018-10-16.zip). Save it under this repository.
- * [OPUS OpenSubtitle corpus for English](http://opus.nlpl.eu/download.php?f=OpenSubtitles/bg-en.xml.gz)(This file is already saved as **OpenSubtitles.bg-en.en** in **corpora_and_texts_obtained** folder which can be downloaded from [Google drive]. Or you can find it on MIT Openmind in /om/data/public/info-len.)
+ * [OPUS OpenSubtitle corpus for English](http://opus.nlpl.eu/download.php?f=OpenSubtitles/bg-en.xml.gz)(This file is already saved as **OpenSubtitles.bg-en.en** in **corpora_and_texts_obtained** folder which can be downloaded from [Google drive]（https://drive.google.com/drive/folders/15bXrFCWAlQrJ3RTFImA9bdKI57G-uyR5?usp=sharing）. Or you can find it on MIT Openmind in /om/data/public/info-len.)
  * [google-web-ngram corpora for English](https://catalog.ldc.upenn.edu/LDC2006T13)(MIT Openmind has this resource in **/om/data/public/corpora/google-web-ngrams**)(Extract the file documenting unigrams according to their frequency. This file is already saved as **vocab_cs** in **corpora_and_texts_obtained** folder.)
  * [CMU phoneme list](http://www.speech.cs.cmu.edu/cgi-bin/cmudict). (This file is already saved as **phoneme_list** in **corpora_and_texts_obtained** folder.)  
  * [CELEX corpora](https://catalog.ldc.upenn.edu/LDC96L14)(MIT Openmind has this resource in **/om/data/public/corpora/celex**)(Extract **epl.cd** file from it. (This file is already saved in **corpora_and_texts_obtained** folder.)
