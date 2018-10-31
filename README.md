@@ -126,7 +126,7 @@ Run following command to get **replication_POS** and **pho_syl_POS** text which 
 	  
   
 ### RNN replication:  
-#### basic (character-based word length)  
+#### Basic (character-based word length)  
 1) Get devset for RNN model with devset.py:  
 Run **devset.py** under **RNN** folder. The obtained **devset** text for test will be in **corpora_and_texts_obtained** folder. The size of this file is 60k sentences. The format for devset text is(capitalized word are turned into lower case):   
 ```			  
@@ -176,12 +176,12 @@ where **info_int** is information value in integer type, **freq_int** is frequen
 5) Plot with plot.Rmd  
 Download **corpora_and_texts_obtained** folder onto your own computer. Save in \[path\]. Run **RNN replication** section of **plot.Rmd** in R Studio.  
   
-#### phoneme-syllable test:  
+#### Phoneme-syllable test:  
 1) Plot with plot.Rmd  
 Run **phoneme-syllable test** section of **plot.Rmd** in R Studio. The obtained images will be in image folder.  
 This is used to see if using phoneme or syllable instead of character to measure word length will make a difference.   
   
-#### gaussian distribution test:  
+#### Gaussian distribution test:  
 1) Plot with plot.Rmd  
 Run **normal distribution test** section of **plot.Rmd** in R Studio.  
 This is used to see if the distribution of information content in different context for each word has influence on word length.  
@@ -191,8 +191,8 @@ This is used to see if the distribution of information content in different cont
 Run **POS test** section of **plot.Rmd** in R Studio.  
 This is used to see if the POS type for each word has influence on word length.  
   
-### reproduction:  
-#### basic test  
+### Reproduction:  
+#### Basic test  
 1) Get \[n\]gm_en_merge\[\_leaveone\], \[n\]gm_en_merge\[\_leaveone\]\_bin_pair.csv, \[n\]gm_en_merge\[\_leaveone\]\_bin_type.csv,and \[n\]gm_en_merge\[\_leaveone\]\_bin_all.csv with \[n\]gm_merge.py:  
 Download **google-web-ngrams** corpora and save it in \[path\] (Here on Openmind the \[path\] is **/om/data/public/corpora**).   
 Run **[n]gm_merge.py** under **replication** folder with command: (n = 2/3/4)  
@@ -204,12 +204,12 @@ Remove **--LOO True** if you don't want to use leave-one-out cross validation.'
 2) Plot with plot.Rmd  
 Run **reproduction** section of **plot.Rmd** in R Studio.  
   
-#### phoneme-syllable test:  
+#### Phoneme-syllable test:  
 1) Plot with plot.Rmd  
 Run **phoneme-syllable test** section of **plot.Rmd** in R Studio. The obtained images will be in image folder.  
 This is used to see if using phoneme or syllable instead of character to measure word length will make a difference.   
   
-#### gaussian distribution test:  
+#### Gaussian distribution test:  
 1) Plot with plot.Rmd  
 Run **normal distribution test** section of **plot.Rmd** in R Studio.  
 This is used to see if the distribution of information content in different context for each word has influence on word length.  
@@ -220,8 +220,8 @@ Run **POS test** section of **plot.Rmd** in R Studio.
 This is used to see if the POS type for each word has influence on word length.  
   
   
-### prerequistes evaluation:  
-#### dataset specification: (frequency clip 50000)  
+### Prerequistes evaluation:  
+#### Dataset specification: (frequency clip 50000)  
 1) Get [n]gm_en_merge_50000\[\_leaveone\], \[n\]gm_en_merge_50000[\_leaveone]\_bin_pair.csv, [n]gm_en_merge_50000[\_leaveone]\_bin_type.csv,and [n]gm_en_merge_50000[\_leaveone]\_bin_all.csv with [n]gm_merge_50000.py:  
 **google-web-ngrams** corpora is in \[path\] (Here on Openmind the [path] is **/om/data/public/corpora**).   
 Run **[n]gm_merge_50000.py** under **prerequisites_evaluation** folder with command: (n = 2/3/4)  
@@ -233,15 +233,15 @@ Remove **--LOO True** if you don't want to use leave-one-out cross validation.'
 2) Plot with plot.Rmd  
 Run **frequency clip evaluation** section of **plot.Rmd** in R Studio. Also replace the cutoff number with different number to see the difference.	  
   
-#### plottinging method: (binning)  
+#### Plottinging method: (binning)  
 1) Plot with plot.Rmd  
 Run **errorbar_bin** and **error_int** in each section to see the difference.	  
   
-### gereralization ability test:  
-#### model adaptation (RNN)  
+### Gereralization ability test:  
+#### Model adaptation (RNN)  
 pass  
   
-#### corpora adaptation: (google-book-ngram)  
+#### Corpora adaptation: (google-book-ngram)  
 1) Get [n]gm_en_merge[\_leaveone], [n]gm_en_merge[\_leaveone]\_bin_pair.csv, [n]gm_en_merge[\_leaveone]\_bin_type.csv,and [n]gm_en_merge[\_leaveone]\_bin_all.csv with [n]gm_merge.py:  
 Download **google-book-v2** corpora and save it in \[path\] (Here on Openmind the [path] is **/om/data/public/corpora/**).   
 Run **[n]gm_google_book_merge.py** under **replication** folder with command: (n = 2/3/4)  
@@ -260,7 +260,7 @@ The frequency clip specification for this is the most frequent 25000 google-book
 3) Plot with plot.Rmd  
 Run **corpora adaptation** section of **plot.Rmd** in R Studio.  
   
-#### multilingual adaptation: (chinese)  
+#### Multilingual adaptation: (chinese)  
 to be done...  
   
 
