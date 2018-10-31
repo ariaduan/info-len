@@ -152,7 +152,7 @@ This section is used for RNN replication.
 cd RNN
 ```
 
-Download the pretrained [RNN model](), and save it in **RNN/language_models**. 
+Download the pretrained [RNN model](https://drive.google.com/file/d/1-ZuQPj4taM6xCLj7N8E7fkdyG11ZiqQk/view?usp=sharing), and save it in **RNN/language_models**. 
 
 #### Basic (character-based word length)  
 
