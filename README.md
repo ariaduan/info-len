@@ -73,21 +73,21 @@ The obtained **replication_word_list** and **replication_word_list_for_POS** tex
 python3 phoneme_len.py
 ```
 The obtained **phoneme_len** will be in **corpora_and_texts_obtained** folder. The format is: (word + phoneme_length)  
->			egg	2  
+>	egg	2  
 
 2)  Get **syllable_len** list with **syllable_list_len.py**:  
 ```
 python3 syllable_list_len.py
 ```
 The obtained **syllale_list** and **syllable_len** texts will be in **corpora_and_texts_obtained** folder. The format is: (word + syllable_length)  
->			egg	1  
+>	egg	1  
 
 3) Get **pho_syl_word_lists** and **pho_syl_word_list_for_POS** with **pho_syl_len_word_list_and_for_POS.py**: 
 ```
 python3 pho_syl_len_word_list_and_for_POS.py
 ```
 The obtained **pho_syl_len_word_list** and **pho_syl_word_list_for_POS** will be in **corpora_and_texts_obtained** folder. The format for the former file is: (word + phoneme_length + syllable_length).  
->				egg	2	1  
+>	egg	2	1  
 
 The latter file will be used as input text to obtain POS tags for each word. Compound words like "wanna" are removed.  
 
@@ -137,12 +137,12 @@ python3 replication_and_pho_syl_len_POS_word_list.py
 ```
 The obtained **replication_POS_word_list(\_50000/75000/100000)**, **OPUS_POS_word_list** and **book_1gm_POS_word_list** will be in **corpora_and_texts_obtained** folder. The format for **replication_POS_word_list(\_50000/75000/100000)** is: (word + POS)  
 
->			the	DT  
+>	the	DT  
   
 
 The format for **pho_syl_len_POS_word_list** is: (word + phoneme_length + syllable_length + POS)  
 
-> 			the	2	1	DT  
+> 	the	2	1	DT  
      
   
 ### RNN replication:  
@@ -194,7 +194,7 @@ The obtained **freq_in_train_set** text will be in **corpora_and_texts_obtained*
 python3 RNN_merge.py --language en --size [size]  
 ```  
 Here the size can be any number between 1~60000. The obtained **RNN_en_merge_[size]**, **RNN_en_merge_\[size\]\_bin_pair.csv**, **RNN_en_merge_\[size\]\_bin_type.csv**, and **RNN_en_merge_\[size\]\_bin_all.csv** texts will be in **corpora_and_texts_obtained** folder.  The format for **RNN_en_merge** is: (word + info_int + freq_int + info_float + freq_float + len + cnt + POS + pho + syl + d + p + h + func)  
->			and	2	5	2.4042419995623083	5.95369407398674	3	8202697422	CC	3	1	0.552565747871	0.0	0	kstest  
+>	and	2	5	2.4042419995623083	5.95369407398674	3	8202697422	CC	3	1	0.552565747871	0.0	0	kstest  
   
 where **info_int** is information value in integer type, **freq_int** is frequency value in integer type, **info_float** is information value in float type, **freq_float** is frequency value in float type, **len** is the orthographic length, **POS** is the part-of-speech tag, **pho** is the phoneme length, **syl** is syllable length, **d** and **p** are D statistic and p-value of normal distribution test on information distribution for each word in all possible contexts. If p<0.05, then **h** is 0, meaning non-normal. Else, **h** is 1, meaning normal. **func** is the specific function used for normal test which varies according to the size of data, i.e., **cnt**. If some value is "-1", then that value is lacked.  
   
