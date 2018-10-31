@@ -183,7 +183,7 @@ The obtained **devset_result** text recording surprisal value (infomation value/
 >	talk 10.510600090026855  
 >	sense 17.938188552856445  
 >	. 2.074157953262329  
->	/</e/o/s/> -0.0  
+>	/</eos> -0.0  
 
 
 3) Get **freq_in_train_set** with **freq_in_train_set.py**(On MIT Openmind the [path] is **/om/data/public/info-len**):  
