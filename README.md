@@ -1,5 +1,5 @@
 # A Further Study on "Word lengths are optimized for efficient communication"
-Code for [Word lengths are optimized for efficient communication](http://www.pnas.org/content/108/9/3526.short) reproduction(ngram) and replication(RNN). The code is written in Python.
+Codes for [Word lengths are optimized for efficient communication](http://www.pnas.org/content/108/9/3526.short) reproduction(ngram) and replication(RNN). The code is written in Python.
 
 ## Introduction  
 
