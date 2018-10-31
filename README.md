@@ -1,4 +1,4 @@
-### Introduction  
+## Introduction  
 
 This work aims to replicate the work in [Word lengths are optimized for efficient communication](http://www.pnas.org/content/108/9/3526.short), in which it is proved that word length has a higher corraletion with the average amount of information conveyed by a particular word **w** than with the frequency of **w**, which challenges the authority of Zipf's law. '  
   
@@ -18,19 +18,19 @@ The paper also presents partial correlations: frequency and length partialing ou
   
  
   
-### Procedure  
+## Procedure  
 In this section we presents the usage of codes for this work.  
   
-#### Specification word lists:  
+### Specification word lists:  
 This section is used for preparing the word lists for the replication. We suggest you skip this section and start from the next section to directly see the replication results. All the word lists can be downloaded from Google Drive. You can download that folder to replace the **corpora_and_texts_obtained** folder.
 
-##### OPUS  
+#### OPUS  
 1) Download OPUS OpenSubtitle corpus for English. (This file is already saved as **OpenSubtitles.bg-en.en** in **corpora_and_texts_obtained** folder.)   
 	  
 2) Get OPUS_word_list and OPUS_word_list_for_POS with OPUS_word_list.py:  
 		Run **OPUS_word_list.py** under **specification** folder. The obtained **OPUS_word_list** and **OPUS_word_list_for_POS** texts will be in **corpora_and_texts_obtained** folder. The former file contains words that exist in OPUS OpenSubtitle corpora. The latter file will be used as input text to obtain POS tags for each word. Compound words like "wanna" are removed.		  
   
-##### Google  
+#### Google  
 1) Download google-web-ngram corpora and extract the file documenting unigrams according to their frequency. (This file is already saved as **vocab_cs** in **corpora_and_texts_obtained** folder.)  
 	  
 2) Get google_25000 word list with google_25000.py:  
@@ -39,7 +39,7 @@ This section is used for preparing the word lists for the replication. We sugges
 	3) Get google_50000 word list with google_50000.py:  
 		Run **google_50000.py** under **specification** folder. The obtained **google_50000** text will be in **corpora_and_texts_obtained** folder. This file contains the 25001~50000 most frequent words in google dataset.  
   
-##### OPUS+Google  
+#### OPUS+Google  
 
 1) Get replication_word_list and replication_word_list_for_POS with replication_word_list.py:  
 		Run **replication_word_list.py** under **specification** folder. The obtained **replication_word_list** and **replication_word_list_for_POS** texts will be in **corpora_and_texts_obtained** folder. **replication_word_list** contains the intersection of **OPUS** and **google_25000**. **replication_word_list_for_POS** will be used as input text to obtain POS tags for each word. Compound words like "wanna" are removed.  
@@ -48,7 +48,7 @@ This section is used for preparing the word lists for the replication. We sugges
 		Run **replication_word_list_50000(/75000/100000).py** under **specification** folder. The obtained **replication_word_list** and **replication_word_list_for_POS** texts will be in **corpora_and_texts_obtained** folder. **replication_word_list** contains the intersection of **OPUS** and **google_25000**. **replication_word_list_for_POS** will be used as input text to obtain POS tags for each word. Compound words like "wanna" are removed.  
   
   
-##### Phoneme+Syllable  
+#### Phoneme+Syllable  
 1) Download phoneme list from http://www.speech.cs.cmu.edu/cgi-bin/cmudict. (This file is already saved as **phoneme_list** in **corpora_and_texts_obtained** folder.)  
 	  
 2) Get phoneme_len list with phoneme_len.py:  
@@ -70,7 +70,7 @@ This section is used for preparing the word lists for the replication. We sugges
 ```
 The latter file will be used as input text to obtain POS tags for each word. Compound words like "wanna" are removed.  
 	  
-##### POS  
+#### POS  
 1) Get replciation_POS and pho_syl_POS with stanford-postagger.sh  
 		Download staford-postagger-full and save it in \[path1\]. Assume the **corpora_and_texts_obtained** folder is in \[path2\]. (Here the \[path1\] and \[path2\] on Openmind are both: **/om/data/public/info-len**.)  
 		Run following command to get **replication_POS** and **pho_syl_POS** text which contains tags for each word in these word lists:  
@@ -101,7 +101,7 @@ The format for **pho_syl_len_POS_word_list** is: (word + phoneme_length + syllab
 3) Get OPUS_POS_word_listi with OPUS_POS_word_list.py	  
 		Run **OPUS_POS_word_list.py** under **specification** folder.  
   
-##### Google-book  
+#### Google-book  
 1) Download **google-book-v2** corpora and save it in \[path\] (Here on Openmind the \[path\] is **/om/data/public/corpora/**).  
   
 2) Get 1gm_google_book_sort_OPUS_word_list with 1gm_google_book_sort_OPUS_word_list.py  
@@ -125,8 +125,8 @@ Run following command to get **replication_POS** and **pho_syl_POS** text which 
   
 	  
   
-#### RNN replication:  
-##### basic (character-based word length)  
+### RNN replication:  
+#### basic (character-based word length)  
 1) Get devset for RNN model with devset.py:  
 Run **devset.py** under **RNN** folder. The obtained **devset** text for test will be in **corpora_and_texts_obtained** folder. The size of this file is 60k sentences. The format for devset text is(capitalized word are turned into lower case):   
 ```			  
@@ -176,23 +176,23 @@ where **info_int** is information value in integer type, **freq_int** is frequen
 5) Plot with plot.Rmd  
 Download **corpora_and_texts_obtained** folder onto your own computer. Save in \[path\]. Run **RNN replication** section of **plot.Rmd** in R Studio.  
   
-##### phoneme-syllable test:  
+#### phoneme-syllable test:  
 1) Plot with plot.Rmd  
 Run **phoneme-syllable test** section of **plot.Rmd** in R Studio. The obtained images will be in image folder.  
 This is used to see if using phoneme or syllable instead of character to measure word length will make a difference.   
   
-##### gaussian distribution test:  
+#### gaussian distribution test:  
 1) Plot with plot.Rmd  
 Run **normal distribution test** section of **plot.Rmd** in R Studio.  
 This is used to see if the distribution of information content in different context for each word has influence on word length.  
   
-##### POS test:  
+#### POS test:  
 1) Plot with plot.Rmd  
 Run **POS test** section of **plot.Rmd** in R Studio.  
 This is used to see if the POS type for each word has influence on word length.  
   
-#### reproduction:  
-##### basic test  
+### reproduction:  
+#### basic test  
 1) Get \[n\]gm_en_merge\[\_leaveone\], \[n\]gm_en_merge\[\_leaveone\]\_bin_pair.csv, \[n\]gm_en_merge\[\_leaveone\]\_bin_type.csv,and \[n\]gm_en_merge\[\_leaveone\]\_bin_all.csv with \[n\]gm_merge.py:  
 Download **google-web-ngrams** corpora and save it in \[path\] (Here on Openmind the \[path\] is **/om/data/public/corpora**).   
 Run **[n]gm_merge.py** under **replication** folder with command: (n = 2/3/4)  
@@ -204,24 +204,24 @@ Remove **--LOO True** if you don't want to use leave-one-out cross validation.'
 2) Plot with plot.Rmd  
 Run **reproduction** section of **plot.Rmd** in R Studio.  
   
-##### phoneme-syllable test:  
+#### phoneme-syllable test:  
 1) Plot with plot.Rmd  
 Run **phoneme-syllable test** section of **plot.Rmd** in R Studio. The obtained images will be in image folder.  
 This is used to see if using phoneme or syllable instead of character to measure word length will make a difference.   
   
-##### gaussian distribution test:  
+#### gaussian distribution test:  
 1) Plot with plot.Rmd  
 Run **normal distribution test** section of **plot.Rmd** in R Studio.  
 This is used to see if the distribution of information content in different context for each word has influence on word length.  
   
-##### POS test:  
+#### POS test:  
 1) Plot with plot.Rmd  
 Run **POS test** section of **plot.Rmd** in R Studio.  
 This is used to see if the POS type for each word has influence on word length.  
   
   
-#### prerequistes evaluation:  
-##### dataset specification: (frequency clip 50000)  
+### prerequistes evaluation:  
+#### dataset specification: (frequency clip 50000)  
 1) Get [n]gm_en_merge_50000\[\_leaveone\], \[n\]gm_en_merge_50000[\_leaveone]\_bin_pair.csv, [n]gm_en_merge_50000[\_leaveone]\_bin_type.csv,and [n]gm_en_merge_50000[\_leaveone]\_bin_all.csv with [n]gm_merge_50000.py:  
 **google-web-ngrams** corpora is in \[path\] (Here on Openmind the [path] is **/om/data/public/corpora**).   
 Run **[n]gm_merge_50000.py** under **prerequisites_evaluation** folder with command: (n = 2/3/4)  
@@ -233,15 +233,15 @@ Remove **--LOO True** if you don't want to use leave-one-out cross validation.'
 2) Plot with plot.Rmd  
 Run **frequency clip evaluation** section of **plot.Rmd** in R Studio. Also replace the cutoff number with different number to see the difference.	  
   
-##### plottinging method: (binning)  
+#### plottinging method: (binning)  
 1) Plot with plot.Rmd  
 Run **errorbar_bin** and **error_int** in each section to see the difference.	  
   
-#### gereralization ability test:  
-##### model adaptation (RNN)  
+### gereralization ability test:  
+#### model adaptation (RNN)  
 pass  
   
-##### corpora adaptation: (google-book-ngram)  
+#### corpora adaptation: (google-book-ngram)  
 1) Get [n]gm_en_merge[\_leaveone], [n]gm_en_merge[\_leaveone]\_bin_pair.csv, [n]gm_en_merge[\_leaveone]\_bin_type.csv,and [n]gm_en_merge[\_leaveone]\_bin_all.csv with [n]gm_merge.py:  
 Download **google-book-v2** corpora and save it in \[path\] (Here on Openmind the [path] is **/om/data/public/corpora/**).   
 Run **[n]gm_google_book_merge.py** under **replication** folder with command: (n = 2/3/4)  
@@ -260,7 +260,7 @@ The frequency clip specification for this is the most frequent 25000 google-book
 3) Plot with plot.Rmd  
 Run **corpora adaptation** section of **plot.Rmd** in R Studio.  
   
-##### multilingual adaptation: (chinese)  
+#### multilingual adaptation: (chinese)  
 to be done...  
   
 
