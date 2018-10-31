@@ -1,42 +1,37 @@
+# A Further Study on "Word lengths are optimized for efficient communication"
+Code for [Word lengths are optimized for efficient communication](http://www.pnas.org/content/108/9/3526.short) reproduction(ngram) and replication(RNN). The code is written in Python.
+
 ## Introduction  
 
-This work aims to replicate the work in [Word lengths are optimized for efficient communication](http://www.pnas.org/content/108/9/3526.short), in which it is proved that word length has a higher corraletion with the average amount of information conveyed by a particular word **w** than with the frequency of **w**, which challenges the authority of Zipf's law. '  
+Assuming the outcome in that paper is trustworthy, we first tried to use RNN to replicate that work so as to test the generalization ability of the proposition and methods, but failed.  
   
-According to that paper, the information value is calculated by the following formula:  
+So we turn back to try to reproduce the work and then scrutinize each prerequisite to see what cause the failure of the replication, meantime evaluating the reasonableness of each prerequisite set in that paper so as to confirm the validity of that work. 
   
-<a href="https://www.codecogs.com/eqnedit.php?latex=$$-&space;\frac{1}{N}&space;\sum_{i=1}^N&space;logP(W=w|C=c_i)$&space;$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$-&space;\frac{1}{N}&space;\sum_{i=1}^N&space;logP(W=w|C=c_i)$&space;$" title="$$- \frac{1}{N} \sum_{i=1}^N logP(W=w|C=c_i)$ $" /></a>  
-  
-where **<a href="https://www.codecogs.com/eqnedit.php?latex=$c_i$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$c_i$" title="$c_i$" /></a>** is the context for the **<a href="https://www.codecogs.com/eqnedit.php?latex=$i$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$i$" title="$i$" /></a>**th occurrence of **<a href="https://www.codecogs.com/eqnedit.php?latex=$w$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$w$" title="$w$" /></a>** and **<a href="https://www.codecogs.com/eqnedit.php?latex=$N$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$N$" title="$N$" /></a>** is the total frequency of **<a href="https://www.codecogs.com/eqnedit.php?latex=$w$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$w$" title="$w$" /></a>** in the corpus.  
-  
-The frequency value is the negative log unigram probability for **w**.  
-  
-The word length is the orthographic length of **w**.  
-  
-As for plotting method: x-axis represents parallel information value and frequency value; y-axis represents word length. Error bars represent SEs and each bin represents 2% of the lexicon.  
-  
-The paper also presents partial correlations: frequency and length partialing out information content; information content and length partialing out frequency.   
-  
+## Prerequisites
+ * [Python 3.6 compiler](https://www.python.org)
+ * [staford-postagger-full](https://nlp.stanford.edu/software/stanford-postagger-full-2018-10-16.zip). Save it under this repository.
+ * [OPUS OpenSubtitle corpus for English](http://opus.nlpl.eu/download.php?f=OpenSubtitles/bg-en.xml.gz)(This file is already saved as **OpenSubtitles.bg-en.en** in **corpora_and_texts_obtained** folder which can be downloaded from [Google drive]. Or you can find it on MIT Openmind in /om/data/public/info-len.)
+ * [google-web-ngram corpora for English](https://catalog.ldc.upenn.edu/LDC2006T13)(MIT Openmind has this resource in **/om/data/public/corpora/google-web-ngrams**)(Extract the file documenting unigrams according to their frequency. This file is already saved as **vocab_cs** in **corpora_and_texts_obtained** folder.)
+ * [CMU phoneme list](http://www.speech.cs.cmu.edu/cgi-bin/cmudict). (This file is already saved as **phoneme_list** in **corpora_and_texts_obtained** folder.)  
+ * [CELEX corpora](https://catalog.ldc.upenn.edu/LDC96L14)(MIT Openmind has this resource in **/om/data/public/corpora/celex**)(Extract **epl.cd** file from it. (This file is already saved in **corpora_and_texts_obtained** folder.)
+ * [google-book-v2 corpora for English](http://storage.googleapis.com/books/ngrams/books/datasetsv2.html)(MIT Openmind has this resource in **/om/data/public/corpora/google-book-v2 corpora**)
  
-  
 ## Procedure  
 In this section we presents the usage of codes for this work.  
   
 ### Specification word lists:  
-This section is used for preparing the word lists for the replication. We suggest you skip this section and start from the next section to directly see the replication results. All the word lists can be downloaded from Google Drive. You can download that folder to replace the **corpora_and_texts_obtained** folder.
+This section is used for preparing the word lists for the replication. You can skip this section if you have downloaded the **corpora_and_texts_obtained** folder from Google Drive. Please save the folder you have downloaded under this repository(to replace the old one).
 
-#### OPUS  
-1) Download OPUS OpenSubtitle corpus for English. (This file is already saved as **OpenSubtitles.bg-en.en** in **corpora_and_texts_obtained** folder.)   
+#### OPUS 
 	  
-2) Get OPUS_word_list and OPUS_word_list_for_POS with OPUS_word_list.py:  
+1) Get **OPUS_word_list** and **OPUS_word_list_for_POS** with **OPUS_word_list.py**:  
 		Run **OPUS_word_list.py** under **specification** folder. The obtained **OPUS_word_list** and **OPUS_word_list_for_POS** texts will be in **corpora_and_texts_obtained** folder. The former file contains words that exist in OPUS OpenSubtitle corpora. The latter file will be used as input text to obtain POS tags for each word. Compound words like "wanna" are removed.		  
   
 #### Google  
-1) Download google-web-ngram corpora and extract the file documenting unigrams according to their frequency. (This file is already saved as **vocab_cs** in **corpora_and_texts_obtained** folder.)  
-	  
-2) Get google_25000 word list with google_25000.py:  
+1) Get google_25000 word list with google_25000.py:  
 		Run **google_25000.py** under **specification** folder. The obtained **google_25000** text will be in **corpora_and_texts_obtained** folder. This file contains 25000 most frequent words in google dataset.  
-  
-	3) Get google_50000 word list with google_50000.py:  
+
+2) Get google_50000 word list with google_50000.py:  
 		Run **google_50000.py** under **specification** folder. The obtained **google_50000** text will be in **corpora_and_texts_obtained** folder. This file contains the 25001~50000 most frequent words in google dataset.  
   
 #### OPUS+Google  
@@ -49,21 +44,17 @@ This section is used for preparing the word lists for the replication. We sugges
   
   
 #### Phoneme+Syllable  
-1) Download phoneme list from http://www.speech.cs.cmu.edu/cgi-bin/cmudict. (This file is already saved as **phoneme_list** in **corpora_and_texts_obtained** folder.)  
-	  
-2) Get phoneme_len list with phoneme_len.py:  
+1) Get phoneme_len list with phoneme_len.py:  
 		Run **phoneme_len.py** under **specification** folder. The obtained **phoneme_len** will be in **corpora_and_texts_obtained** folder. The format is: (word + phoneme_length)  
 ```
 			egg	2  
 ```
-3) Download CELEX corpora and extract **epl.cd** file from it. (This file is already saved in **corpora_and_texts_obtained** folder.)  
-	  
-4) Get syllable_len list with syllable_list_len.py:  
+2)  Get syllable_len list with syllable_list_len.py:  
 		Run **syllable_list_len.py** under **specification** folder. The obtained **syllale_list** and **syllable_len** texts will be in **corpora_and_texts_obtained** folder. The format is: (word + syllable_length)  
 ```
 			egg	1  
 ```
-5) Get pho_syl_word_lists and pho_syl_word_list_for_POS with pho_syl_len_word_list_and_for_POS.py:  
+3) Get pho_syl_word_lists and pho_syl_word_list_for_POS with pho_syl_len_word_list_and_for_POS.py:  
 		Run **pho_syl_len_word_list_and_for_POS.py** under **specification** folder. The obtained **pho_syl_len_word_list** and **pho_syl_word_list_for_POS** will be in **corpora_and_texts_obtained** folder. The format for the former file is: (word + phoneme_length + syllable_length).  
 ```	
 			egg	2	1  
@@ -71,30 +62,33 @@ This section is used for preparing the word lists for the replication. We sugges
 The latter file will be used as input text to obtain POS tags for each word. Compound words like "wanna" are removed.  
 	  
 #### POS  
-1) Get replciation_POS and pho_syl_POS with stanford-postagger.sh  
-		Download staford-postagger-full and save it in \[path1\]. Assume the **corpora_and_texts_obtained** folder is in \[path2\]. (Here the \[path1\] and \[path2\] on Openmind are both: **/om/data/public/info-len**.)  
-		Run following command to get **replication_POS** and **pho_syl_POS** text which contains tags for each word in these word lists:  
+1) Get replciation_POS and pho_syl_POS with stanford-postagger.sh   
+		Run following command under this master repository to get **replication_POS** and **pho_syl_POS** text which contains tags for each word in these word lists:  
 ```
-			cd [path1]/stanford-postagger-full  
+			cd stanford-postagger-full  
 			  
-			./stanford-postagger.sh models/wsj-0-18-left3words-distsim.tagger [path2]/corpora_and_texts_obtained/OPUS_word_list_for_POS > [path2]/corpora_and_texts_obtained/OPUS_POS  
+			./stanford-postagger.sh models/wsj-0-18-left3words-distsim.tagger ../corpora_and_texts_obtained/OPUS_word_list_for_POS > ../corpora_and_texts_obtained/OPUS_POS  
   
-			./stanford-postagger.sh models/wsj-0-18-left3words-distsim.tagger [path2]/corpora_and_texts_obtained/replication_word_list_for_POS > [path2]/corpora_and_texts_obtained/replication_POS  
+			./stanford-postagger.sh models/wsj-0-18-left3words-distsim.tagger ../corpora_and_texts_obtained/replication_word_list_for_POS > ../corpora_and_texts_obtained/replication_POS  
   
-			./stanford-postagger.sh models/wsj-0-18-left3words-distsim.tagger [path2]/corpora_and_texts_obtained/replication_word_list_for_POS_50000(/75000/100000) > [path2]/corpora_and_texts_obtained/replication_POS_50000(/75000/100000)  
+			./stanford-postagger.sh models/wsj-0-18-left3words-distsim.tagger ../corpora_and_texts_obtained/replication_word_list_for_POS_50000(/75000/100000) > ../corpora_and_texts_obtained/replication_POS_50000(/75000/100000)  
   
-			./stanford-postagger.sh models/wsj-0-18-left3words-distsim.tagger [path2]/corpora_and_texts_obtained/pho_syl_word_list_for_POS > [path2]/corpora_and_texts_obtained/pho_syl_POS  
+			./stanford-postagger.sh models/wsj-0-18-left3words-distsim.tagger ../corpora_and_texts_obtained/pho_syl_word_list_for_POS > ../corpora_and_texts_obtained/pho_syl_POS  
 ```
 The format for these obtained files is:  
 ```			  
 			the_DT of_IN and_CC to_TO in_IN for_IN is_VBZ on_IN that_DT  
 ```	  
+
 2) Get replication_POS_word_list(\_50000/75000/100000), replication_POS_word_list(\_50000/75000/100000), and pho_syl_len_POS_word_list with replication_and_pho_syl_len_POS_word_list.py  
 		Run **replication_and_pho_syl_len_POS_word_list.py** under **specification** folder. The obtained **replication_POS_word_list(\_50000/75000/100000)**, and **pho_syl_len_POS_word_list** will be in **corpora_and_texts_obtained** folder. The format for **replication_POS_word_list(\_50000/75000/100000)** is: (word + POS)  
+
 ```  
 			the	DT  
 ```  
+
 The format for **pho_syl_len_POS_word_list** is: (word + phoneme_length + syllable_length + POS)  
+
 ```			  
 			the	2	1	DT  
 ```  
