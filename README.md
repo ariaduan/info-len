@@ -127,9 +127,9 @@ cd stanford-postagger-full
 ./stanford-postagger.sh models/wsj-0-18-left3words-distsim.tagger ../corpora_and_texts_obtained/book_1gm_for_POS > ../corpora_and_texts_obtained/book_1gm_POS  
 ```  
 The format for these obtained **replication_POS** and **pho_syl_POS** is:    
-```		    
-the_DT of_IN and_CC to_TO in_IN for_IN is_VBZ on_IN that_DT 	    
-```  
+	    
+>	the_DT of_IN and_CC to_TO in_IN for_IN is_VBZ on_IN that_DT 	    
+  
 2) Get **replication_POS_word_list(\_50000/75000/100000)**, **pho_syl_len_POS_word_list**, and **book_1gm_POS_word_list** with **replication_and_pho_syl_len_POS_word_list.py**:  
 ```  
 cd ../specification  
